@@ -1,49 +1,107 @@
 rules_version = '2';
 
-// DuoGen Firestore rules.
-// Paste into Firebase console → Firestore Database → Rules, then Publish.
-// isAdmin() lists the admin accounts (created under
-// Authentication → Users) that may read enquiries.
+// DuoGen Firestore rules. Deploy with:  npx firebase-tools deploy --only firestore
+//
+// Roles live in users/{uid}.role ("admin" | "manager" | "employee") and are
+// written only by the server (Firebase Admin SDK) — never from the browser.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasRole(roles) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && profile().active == true
+        && profile().role in roles;
+    }
+
     function isAdmin() {
-      return request.auth != null
-        && request.auth.token.email in ['roovis2003@gmail.com'];
+      return hasRole(['admin']);
     }
 
-    function str(field, min, max) {
-      return request.resource.data[field] is string
-        && request.resource.data[field].size() >= min
-        && request.resource.data[field].size() <= max;
+    function str(data, field, min, max) {
+      return data[field] is string && data[field].size() >= min && data[field].size() <= max;
     }
 
+    // --- Portal users -------------------------------------------------------
+    // Everyone can read their own profile; only admins can read all of them.
+    // All writes go through the server API (admin-only), so none from clients.
+    match /users/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // Username reservations, managed by the server only.
+    match /usernames/{username} {
+      allow read, write: if false;
+    }
+
+    // --- Contact-page enquiries --------------------------------------------
     match /enquiries/{id} {
-      // Anyone may submit an enquiry, but only in the exact shape the contact
-      // form sends — no extra fields, sane sizes, server timestamp, status "new".
+      // Anyone may submit, but only in the exact shape the contact form sends.
       allow create: if request.resource.data.keys().hasOnly([
             'fullName', 'email', 'company', 'phone', 'industry', 'services',
             'budget', 'description', 'contactMethod', 'consent', 'status', 'createdAt'])
-        && str('fullName', 2, 120)
-        && str('email', 5, 200)
+        && str(request.resource.data, 'fullName', 2, 120)
+        && str(request.resource.data, 'email', 5, 200)
         && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')
-        && str('company', 0, 200)
-        && str('phone', 0, 30)
-        && str('industry', 1, 80)
+        && str(request.resource.data, 'company', 0, 200)
+        && str(request.resource.data, 'phone', 0, 30)
+        && str(request.resource.data, 'industry', 1, 80)
         && request.resource.data.services is list
         && request.resource.data.services.size() <= 12
-        && str('budget', 0, 60)
-        && str('description', 20, 5000)
-        && str('contactMethod', 0, 20)
+        && str(request.resource.data, 'budget', 0, 60)
+        && str(request.resource.data, 'description', 20, 5000)
+        && str(request.resource.data, 'contactMethod', 0, 20)
         && request.resource.data.consent == true
         && request.resource.data.status == 'new'
         && request.resource.data.createdAt == request.time;
 
-      // Only the admin can read enquiries and change their status.
-      allow read: if isAdmin();
-      allow update: if isAdmin()
+      // Admins and managers can read enquiries and update their status.
+      allow read: if hasRole(['admin', 'manager']);
+      allow update: if hasRole(['admin', 'manager'])
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
         && request.resource.data.status in ['new', 'contacted', 'closed'];
+      allow delete: if isAdmin();
+    }
+
+    // --- Finance ledger (admins only) ---------------------------------------
+    function validEntry(d) {
+      return d.keys().hasOnly([
+            'type', 'amount', 'category', 'date', 'description', 'party', 'paymentMethod',
+            'reference', 'status', 'notes', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+        && d.type in ['income', 'expense']
+        && (d.amount is int || d.amount is float)
+        && d.amount > 0 && d.amount <= 1000000000
+        && str(d, 'category', 1, 60)
+        && d.date is timestamp
+        && str(d, 'description', 2, 500)
+        && str(d, 'party', 0, 120)
+        && str(d, 'paymentMethod', 0, 40)
+        && str(d, 'reference', 0, 80)
+        && d.status in ['completed', 'pending']
+        && str(d, 'notes', 0, 2000)
+        && d.updatedBy == request.auth.uid
+        && d.updatedAt == request.time;
+    }
+
+    match /finance/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && validEntry(request.resource.data)
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin()
+        && validEntry(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isAdmin();
     }
 

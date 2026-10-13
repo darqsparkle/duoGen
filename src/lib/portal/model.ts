@@ -1,0 +1,140 @@
+/**
+ * Shared data model for the DuoGen portal. Used by the browser (forms, tables)
+ * and the server (API validation), so the rules live in one place.
+ */
+
+export const ROLES = ["admin", "manager", "employee"] as const;
+export type Role = (typeof ROLES)[number];
+
+export const ROLE_LABEL: Record<Role, string> = {
+  admin: "Admin",
+  manager: "Manager",
+  employee: "Employee",
+};
+
+export const SEXES = ["Male", "Female", "Other", "Prefer not to say"] as const;
+export type Sex = (typeof SEXES)[number];
+
+/** Suggestions only — the tagline field accepts any designation. */
+export const TAGLINE_SUGGESTIONS = [
+  "Founder",
+  "Co-founder",
+  "CEO",
+  "CTO",
+  "Lead Engineer",
+  "Senior Engineer",
+  "Engineer",
+  "Designer",
+  "Project Manager",
+  "Sales Executive",
+  "Intern",
+];
+
+export type UserProfile = {
+  uid: string;
+  name: string;
+  username: string;
+  email: string;
+  sex: Sex;
+  role: Role;
+  tagline: string;
+  active: boolean;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+  createdBy?: string;
+};
+
+// ---------------------------------------------------------------------------
+// Validation (shared by the create/edit forms and the server API)
+// ---------------------------------------------------------------------------
+
+export const USERNAME_PATTERN = /^[a-z0-9](?:[a-z0-9._]{1,28})[a-z0-9]$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+export function normalizeUsername(value: string) {
+  return value.trim().toLowerCase();
+}
+
+export type UserInput = {
+  name: string;
+  username: string;
+  email: string;
+  sex: string;
+  role: string;
+  tagline: string;
+  password?: string;
+  active?: boolean;
+};
+
+/** Returns field → message. `requirePassword` is true when creating a user. */
+export function validateUserInput(input: UserInput, requirePassword: boolean) {
+  const errors: Partial<Record<keyof UserInput, string>> = {};
+  if (input.name.trim().length < 2 || input.name.trim().length > 80) errors.name = "Enter a name (2–80 characters).";
+  if (!USERNAME_PATTERN.test(normalizeUsername(input.username)))
+    errors.username = "3–30 characters: lowercase letters, numbers, dots or underscores; must start and end with a letter or number.";
+  if (!EMAIL_PATTERN.test(input.email.trim())) errors.email = "Enter a valid email address.";
+  if (!(SEXES as readonly string[]).includes(input.sex)) errors.sex = "Choose an option.";
+  if (!(ROLES as readonly string[]).includes(input.role)) errors.role = "Choose a role.";
+  if (input.tagline.trim().length < 2 || input.tagline.trim().length > 60)
+    errors.tagline = "Enter a designation (2–60 characters), e.g. Lead Engineer.";
+  if (requirePassword || input.password) {
+    const password = input.password ?? "";
+    if (password.length < 8) errors.password = "Use at least 8 characters.";
+    else if (!/[A-Za-z]/.test(password) || !/\d/.test(password))
+      errors.password = "Include at least one letter and one number.";
+  }
+  return errors;
+}
+
+// ---------------------------------------------------------------------------
+// Finance
+// ---------------------------------------------------------------------------
+
+export const ENTRY_TYPES = ["income", "expense"] as const;
+export type EntryType = (typeof ENTRY_TYPES)[number];
+
+export const CATEGORIES: Record<EntryType, string[]> = {
+  income: ["Client payment", "Project advance", "Retainer", "Product sales", "Investment", "Other income"],
+  expense: [
+    "Salaries",
+    "Rent",
+    "Software & tools",
+    "Hardware",
+    "Marketing",
+    "Travel",
+    "Utilities",
+    "Taxes & fees",
+    "Professional services",
+    "Office supplies",
+    "Other expense",
+  ],
+};
+
+export const PAYMENT_METHODS = ["Bank transfer", "UPI", "Cash", "Card", "Cheque", "Other"] as const;
+export const ENTRY_STATUSES = ["completed", "pending"] as const;
+export type EntryStatus = (typeof ENTRY_STATUSES)[number];
+
+export type FinanceEntry = {
+  id: string;
+  type: EntryType;
+  amount: number;
+  category: string;
+  date: Date;
+  description: string;
+  party: string;
+  paymentMethod: string;
+  reference: string;
+  status: EntryStatus;
+  notes: string;
+};
+
+export const ENQUIRY_STATUSES = ["new", "contacted", "closed"] as const;
+export type EnquiryStatus = (typeof ENQUIRY_STATUSES)[number];
+
+export const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+export const inrCompact = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});

@@ -2,11 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/constants";
-import { Navbar } from "@/components/navigation/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { ScrollProgress } from "@/components/animations/ScrollProgress";
-import { Genie } from "@/components/genie/Genie";
-import { ArcadeLauncher } from "@/components/games/ArcadeLauncher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,24 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
       </head>
-      <body className="flex min-h-dvh flex-col">
-        <a
-          href="#main"
-          className="fixed top-3 left-3 z-[90] -translate-y-24 rounded-full bg-glow px-5 py-3 font-medium text-navy transition-transform focus:translate-y-0"
-        >
-          Skip to content
-        </a>
-        <ScrollProgress />
-        <Navbar />
-        {/* overflow-x-clip: off-screen reveal offsets never cause sideways scrolling,
-            and unlike overflow-hidden it keeps position: sticky working. */}
-        <main id="main" className="flex-1 overflow-x-clip">
-          {children}
-        </main>
-        <Footer />
-        <ArcadeLauncher />
-        <Genie />
-      </body>
+      <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );
 }
