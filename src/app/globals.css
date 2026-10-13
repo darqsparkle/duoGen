@@ -1,26 +1,312 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ---------------------------------------------------------------------------
+   DuoGen design tokens
+   Dark scenes: navy / midnight + luminous greens.
+   Light scenes: lilac / lavender / white + ink.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-navy: #07091b;
+  --color-midnight: #101632;
+  --color-glow: #7cffb2;
+  --color-fresh: #b7ffce;
+  --color-mint: #ddfbe8;
+  --color-lavender: #e8e9ff;
+  --color-lilac: #f4f4ff;
+  --color-ink: #111326;
+  --color-muted: #666b80;
+  --color-line: #dfe2ef;
+  /* Logo blues: a supporting accent, mainly for emphasis in light scenes. */
+  --color-electric: #2f5bff;
+  --color-cyan: #22d3ee;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-marquee-reverse: marquee-reverse var(--marquee-duration, 40s)
+    linear infinite;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-float-slow: float 12s ease-in-out infinite;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-dash: dash 6s linear infinite;
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-assemble: assemble 1.4s var(--ease-out-expo) both;
+  --animate-converge: converge 1.3s var(--ease-out-expo) both;
+  --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  @keyframes marquee-reverse {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -12px, 0);
+    }
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -200;
+    }
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes assemble {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  @keyframes converge {
+    from {
+      opacity: 0;
+      transform: translate3d(var(--from-x, 0), var(--from-y, 0), 0) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
   }
 }
 
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-lilac);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-glow);
+  color: var(--color-navy);
+}
+
+/* Green outline with a navy inner ring stays visible on light and dark scenes.
+   Kept in the base layer so components can refine it with utilities. */
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-glow);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--color-navy);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reusable surfaces and effects
+--------------------------------------------------------------------------- */
+@utility grid-lines-dark {
+  background-image:
+    linear-gradient(to right, rgb(124 255 178 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(124 255 178 / 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+}
+
+@utility grid-lines-light {
+  background-image:
+    linear-gradient(to right, rgb(17 19 38 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(17 19 38 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 60% 60% at 70% 30%, black, transparent);
+}
+
+@utility text-glow-gradient {
+  background: linear-gradient(100deg, #ddfbe8 0%, #7cffb2 45%, #b7ffce 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-blue-gradient {
+  background: linear-gradient(100deg, #2f5bff 0%, #3b82f6 55%, #22b8e6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-outline-ink {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-ink);
+}
+
+@utility marquee-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+/* No backdrop blur: these surfaces move, and re-blurring every frame is costly. */
+@utility glass-dark {
+  background: linear-gradient(145deg, rgb(28 36 78 / 0.92), rgb(16 22 50 / 0.86));
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+/* Section sheets overlap the previous scene with a rounded top edge, so dark
+   and light scenes hand over deliberately rather than as hard cuts. */
+@utility scene-sheet {
+  position: relative;
+  /* Own stacking context; later sheets then paint over earlier ones in DOM order. */
+  isolation: isolate;
+  margin-top: -2.5rem;
+  border-top-left-radius: 2.5rem;
+  border-top-right-radius: 2.5rem;
+  @media (width >= 48rem) {
+    margin-top: -3.5rem;
+    border-top-left-radius: 3.5rem;
+    border-top-right-radius: 3.5rem;
+  }
+}
+
+/* Genie's eyes blink every few seconds. */
+.genie-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: genie-blink 5s ease-in-out infinite;
+}
+@keyframes genie-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.15);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal (see components/animations/Reveal.tsx).
+   Content is only hidden once JS has flagged <html class="js">, so it stays
+   visible without JavaScript. Once revealed it is never hidden again.
+--------------------------------------------------------------------------- */
+.reveal {
+  --reveal-distance: 48px;
+  --reveal-from: translate3d(0, calc(var(--reveal-distance) * 0.7), 0);
+}
+.reveal[data-dir="left"] {
+  --reveal-from: translate3d(calc(var(--reveal-distance) * -1.6), 0, 0);
+}
+.reveal[data-dir="right"] {
+  --reveal-from: translate3d(calc(var(--reveal-distance) * 1.6), 0, 0);
+}
+.reveal[data-dir="down"] {
+  --reveal-from: translate3d(0, calc(var(--reveal-distance) * -0.7), 0);
+}
+.reveal[data-dir="scale"] {
+  --reveal-from: scale(0.9);
+}
+.reveal[data-dir="none"] {
+  --reveal-from: none;
+}
+
+html.js .reveal {
+  opacity: 0;
+  transform: var(--reveal-from);
+  filter: blur(6px);
+  transition:
+    opacity 0.7s var(--ease-out-expo) var(--reveal-delay, 0ms),
+    transform 0.8s var(--ease-out-expo) var(--reveal-delay, 0ms),
+    filter 0.6s var(--ease-out-expo) var(--reveal-delay, 0ms);
+}
+html.js .reveal[data-in="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+@media (width < 48rem) {
+  .reveal {
+    --reveal-distance: 20px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: stop decorative loops, drop movement, keep content visible.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+  }
+  /* Everything is visible immediately; no reveal movement or fades. */
+  html.js .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
 }
