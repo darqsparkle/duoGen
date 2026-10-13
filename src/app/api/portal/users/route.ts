@@ -24,6 +24,9 @@ export async function POST(request: Request) {
       password: body.password,
       displayName: body.name.trim(),
       disabled: body.active === false,
+      // The admin vouches for this address. A verified email lets "Sign in with
+      // Google" attach to this same account instead of replacing its password.
+      emailVerified: true,
     });
 
     try {

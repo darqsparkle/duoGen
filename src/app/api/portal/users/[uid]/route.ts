@@ -34,6 +34,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/portal/use
 
     await adminAuth().updateUser(uid, {
       email: body.email.trim(),
+      emailVerified: true,
       displayName: body.name.trim(),
       disabled: !active,
       ...(body.password ? { password: body.password } : {}),

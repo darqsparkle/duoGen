@@ -62,6 +62,6 @@ await db.runTransaction(async (tx) => {
     { merge: true },
   );
 });
-await auth.updateUser(user.uid, { displayName: args.name.trim() });
+await auth.updateUser(user.uid, { displayName: args.name.trim(), emailVerified: true });
 console.log(`✓ ${user.email} is now an admin (@${username}).`);
 process.exit(0);
