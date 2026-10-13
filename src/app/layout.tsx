@@ -6,6 +6,7 @@ import { Navbar } from "@/components/navigation/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/animations/ScrollProgress";
 import { Genie } from "@/components/genie/Genie";
+import { ArcadeLauncher } from "@/components/games/ArcadeLauncher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <Footer />
+        <ArcadeLauncher />
         <Genie />
       </body>
     </html>
