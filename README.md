@@ -18,6 +18,18 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 Copy `.env.example` to `.env.local` and fill in what you have. Contact details and social
 links stay hidden on the site until their variable is set — nothing is invented.
 
+## Deploy on Vercel
+
+1. Import the GitHub repo in Vercel (framework is detected as Next.js).
+2. Add environment variables (Project → Settings → Environment Variables):
+   - `GEMINI_API_KEY` — your Google AI Studio key (powers Genie's AI answers)
+   - `NEXT_PUBLIC_SITE_URL` — your live domain, e.g. `https://duogen.example`
+   - optional: `GEMINI_MODELS`, `NEXT_PUBLIC_CONTACT_*`, `NEXT_PUBLIC_SOCIAL_*` (see `.env.example`)
+3. Deploy. Changing a variable later requires a redeploy.
+
+`vercel.json` pins functions to the Mumbai region (`bom1`), gives the Genie route up to
+30 seconds (it may retry backup Gemini models), and adds basic security headers.
+
 ## Structure
 
 ```
