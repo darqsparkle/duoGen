@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, CircleAlert, CircleCheck, LoaderCircle, X } from "lucide-react";
-import { useId, useRef, useState, type ReactNode } from "react";
-import { submitEnquiry } from "@/lib/enquiry";
+import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { enquiriesEnabled, submitEnquiry } from "@/lib/enquiry";
 import {
   budgetOptions,
   contactMethodOptions,
@@ -89,6 +89,15 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
   const [showPrefill, setShowPrefill] = useState(Boolean(prefill?.label));
+  const [delivered, setDelivered] = useState(false);
+  // False in the server HTML, true once React is running: until then, submitting
+  // would fall back to a native form post, so the button stays disabled.
+  const ready = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const update = <K extends EnquiryField>(field: K, value: EnquiryValues[K]) => {
     const next = { ...values, [field]: value };
@@ -129,7 +138,8 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
 
     setStatus("submitting");
     try {
-      const result = await submitEnquiry(values);
+      const result = await submitEnquiry(values, honeypotRef.current?.value);
+      setDelivered(result.ok && result.delivered);
       setMessage(result.message);
       setStatus(result.ok ? "success" : "error");
     } catch {
@@ -174,7 +184,7 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
               <CircleCheck aria-hidden className="size-7" />
             </span>
             <h2 className="relative font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              Enquiry ready — demo mode
+              {delivered ? "Enquiry received" : "Enquiry ready — demo mode"}
             </h2>
             <p className="relative max-w-lg text-lg leading-relaxed text-white/75">{message}</p>
             <button
@@ -198,8 +208,19 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
             className="flex flex-col gap-7 rounded-[2rem] border border-line bg-lilac/60 p-6 sm:p-10"
           >
             <p id={`${uid}-required-note`} className="text-sm text-muted">
-              Fields marked * are required. This is a frontend demo — nothing you enter is sent or stored.
+              Fields marked * are required.{" "}
+              {enquiriesEnabled
+                ? "Your details are used only to respond to your enquiry."
+                : "This is a frontend demo — nothing you enter is sent or stored."}
             </p>
+
+            {/* Spam trap: hidden from people and assistive tech; bots tend to fill it. */}
+            <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label>
+                Leave this field empty
+                <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
 
             {showPrefill && prefill?.label && (
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-glow/50 bg-mint px-4 py-3 text-sm">
@@ -453,8 +474,8 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
             <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="submit"
-                disabled={status === "submitting"}
-                aria-disabled={status === "submitting"}
+                disabled={!ready || status === "submitting"}
+                aria-disabled={!ready || status === "submitting"}
                 className="group inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-ink px-7 py-4 font-medium text-white transition-all duration-300 hover:bg-navy hover:shadow-[0_0_0_4px_rgb(124_255_178/0.45)] disabled:cursor-wait disabled:opacity-80"
               >
                 {status === "submitting" ? (

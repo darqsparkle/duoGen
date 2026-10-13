@@ -9,6 +9,7 @@ import { LightHero } from "@/components/ui/LightHero";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 import { contactDetails, hasDirectContact } from "@/lib/constants";
 import { contactNextSteps } from "@/lib/process";
+import { enquiriesEnabled } from "@/lib/enquiry";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -114,11 +115,23 @@ export default function ContactPage() {
             </Reveal>
             <Reveal dir="right" delay={160}>
               <div className="rounded-[1.75rem] border border-dashed border-ink/20 p-6 text-sm leading-relaxed text-muted">
-                <p className="font-medium text-ink">Frontend demo</p>
-                <p className="mt-1">
-                  This form validates in your browser only. Your details are not sent to anyone,
-                  saved, or stored in your browser.
-                </p>
+                {enquiriesEnabled ? (
+                  <>
+                    <p className="font-medium text-ink">Your privacy</p>
+                    <p className="mt-1">
+                      Your details are saved securely and used by the DuoGen team to respond to
+                      your enquiry.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium text-ink">Frontend demo</p>
+                    <p className="mt-1">
+                      This form validates in your browser only. Your details are not sent to
+                      anyone, saved, or stored in your browser.
+                    </p>
+                  </>
+                )}
               </div>
             </Reveal>
           </aside>

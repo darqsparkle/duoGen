@@ -1,0 +1,55 @@
+rules_version = '2';
+
+// DuoGen Firestore rules.
+// Paste into Firebase console → Firestore Database → Rules, then Publish.
+// isAdmin() lists the admin accounts (created under
+// Authentication → Users) that may read enquiries.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email in ['roovis2003@gmail.com'];
+    }
+
+    function str(field, min, max) {
+      return request.resource.data[field] is string
+        && request.resource.data[field].size() >= min
+        && request.resource.data[field].size() <= max;
+    }
+
+    match /enquiries/{id} {
+      // Anyone may submit an enquiry, but only in the exact shape the contact
+      // form sends — no extra fields, sane sizes, server timestamp, status "new".
+      allow create: if request.resource.data.keys().hasOnly([
+            'fullName', 'email', 'company', 'phone', 'industry', 'services',
+            'budget', 'description', 'contactMethod', 'consent', 'status', 'createdAt'])
+        && str('fullName', 2, 120)
+        && str('email', 5, 200)
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')
+        && str('company', 0, 200)
+        && str('phone', 0, 30)
+        && str('industry', 1, 80)
+        && request.resource.data.services is list
+        && request.resource.data.services.size() <= 12
+        && str('budget', 0, 60)
+        && str('description', 20, 5000)
+        && str('contactMethod', 0, 20)
+        && request.resource.data.consent == true
+        && request.resource.data.status == 'new'
+        && request.resource.data.createdAt == request.time;
+
+      // Only the admin can read enquiries and change their status.
+      allow read: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['new', 'contacted', 'closed'];
+      allow delete: if isAdmin();
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
