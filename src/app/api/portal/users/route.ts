@@ -1,5 +1,5 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { adminAuth, adminDb, errorResponse, HttpError, requireRole } from "@/lib/firebase/admin";
+import { adminAuth, adminDb, directoryCard, errorResponse, HttpError, requireRole } from "@/lib/firebase/admin";
 import { normalizeUsername, validateUserInput, type UserInput } from "@/lib/portal/model";
 
 /** Create a portal user (admin only): Auth account + profile + unique username. */
@@ -48,6 +48,7 @@ export async function POST(request: Request) {
         if ((await tx.get(usernameRef)).exists) throw new HttpError(409, "That username is already taken.");
         tx.create(usernameRef, { uid: authUser.uid });
         tx.create(db.collection("users").doc(authUser.uid), profile);
+        tx.set(db.collection("directory").doc(authUser.uid), directoryCard(profile));
       });
       return Response.json({ uid: authUser.uid }, { status: 201 });
     } catch (error) {

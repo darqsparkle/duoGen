@@ -2,11 +2,13 @@
 
 import { collection, getCountFromServer, getFirestore, query, where } from "firebase/firestore";
 import Link from "next/link";
-import { ArrowRight, Briefcase, Inbox, Sparkles, UserCog, Users, Wallet } from "lucide-react";
+import { ArrowRight, Briefcase, FolderKanban, Inbox, Sparkles, UserCog, Users, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { firebaseApp, ENQUIRIES } from "@/lib/firebase/client";
 import { ROLE_LABEL } from "@/lib/portal/model";
 import { FinanceSummary } from "../finance/FinanceSummary";
+import { daysUntil, useProjects } from "../projects/data";
+import { OPEN_PROJECT_STATUSES } from "@/lib/portal/model";
 import { usePortal } from "../PortalProvider";
 import { Card, PageHeader, StatTile } from "../ui";
 
@@ -75,6 +77,7 @@ export function OverviewScreen() {
 
       {isLead && (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <ProjectTiles />
           <StatTile label="New enquiries" value={newEnquiries ?? "—"} hint="Waiting for a reply" />
           {isAdmin && <StatTile label="Team members" value={users ?? "—"} />}
         </div>
@@ -91,6 +94,7 @@ export function OverviewScreen() {
           <FinanceSummary period="fy" />
           <h2 className="font-display text-xl font-semibold">Admin panel</h2>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <PanelLink href="/portal/projects" icon={FolderKanban} title="Projects" text="Pipeline, milestones, teams and follow-ups." />
             <PanelLink href="/portal/finance" icon={Wallet} title="Finance" text="Record income and expenses, see growth." />
             <PanelLink href="/portal/users" icon={Users} title="Users" text="Add team members, roles and designations." />
             <PanelLink href="/portal/enquiries" icon={Inbox} title="Enquiries" text="Respond to website enquiries." />
@@ -106,9 +110,26 @@ export function OverviewScreen() {
   );
 }
 
+/** Live project counts for the overview. */
+function ProjectTiles() {
+  const { projects } = useProjects();
+  const open = (projects ?? []).filter((p) => OPEN_PROJECT_STATUSES.includes(p.status));
+  const calls = open.filter((p) => {
+    const d = daysUntil(p.nextCallDate);
+    return d !== null && d <= 7;
+  }).length;
+  return (
+    <>
+      <StatTile label="Projects in progress" value={projects ? (projects.filter((p) => p.status === "active").length) : "—"} hint={`${open.length} open in pipeline`} />
+      <StatTile label="Calls this week" value={projects ? calls : "—"} hint="Follow-ups due within 7 days" />
+    </>
+  );
+}
+
 export function ManagerPanel() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
+      <PanelLink href="/portal/projects" icon={FolderKanban} title="Projects" text="Pipeline, milestones, teams and follow-ups." />
       <PanelLink href="/portal/enquiries" icon={Inbox} title="Enquiries" text="See and respond to website enquiries." />
       <ComingSoonPanel title="Manager dashboard" points={["Team workload and assignments", "Project status at a glance", "Approvals"]} />
     </div>

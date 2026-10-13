@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { categoryColor } from "../charts/CategoryDonut";
 import { buttonStyles, Card, inputStyles, Notice } from "../ui";
 import { periodStart, useFinanceEntries, type Period } from "./data";
+import { useProjects } from "../projects/data";
 
 function csv(rows: FinanceEntry[]) {
   const head = ["Date", "Type", "Amount", "Category", "Description", "Party", "Payment method", "Reference", "Status", "Notes"];
@@ -27,17 +28,23 @@ function csv(rows: FinanceEntry[]) {
 export function Ledger({ period, onEdit }: { period: Period; onEdit: (entry: FinanceEntry) => void }) {
   const [type, setType] = useState<EntryType | "all">("all");
   const [category, setCategory] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const { projects } = useProjects();
+  const projectName = useMemo(() => new Map((projects ?? []).map((p) => [p.id, p.name])), [projects]);
   const [search, setSearch] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const start = useMemo(() => periodStart(period), [period]);
-  const { entries, error } = useFinanceEntries({ start, type, category });
+  const { entries, error } = useFinanceEntries({ start, type, category, projectId });
 
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
     return (entries ?? []).filter(
-      (e) => !term || [e.description, e.party, e.reference, e.category, e.notes].join(" ").toLowerCase().includes(term),
+      (e) =>
+        (!projectId || type === "all" || e.type === type) &&
+        (!projectId || !category || e.category === category) &&
+        (!term || [e.description, e.party, e.reference, e.category, e.notes].join(" ").toLowerCase().includes(term)),
     );
-  }, [entries, search]);
+  }, [entries, search, projectId, type, category]);
 
   async function remove(id: string) {
     try {
@@ -67,7 +74,7 @@ export function Ledger({ period, onEdit }: { period: Period; onEdit: (entry: Fin
         </button>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+      <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]">
         <label className="relative">
           <span className="sr-only">Search transactions</span>
           <Search aria-hidden className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
@@ -91,6 +98,22 @@ export function Ledger({ period, onEdit }: { period: Period; onEdit: (entry: Fin
           <option value="all">All types</option>
           <option value="income">Income</option>
           <option value="expense">Expenses</option>
+        </select>
+        <select
+          aria-label="Project"
+          value={projectId}
+          onChange={(e) => {
+            setProjectId(e.target.value);
+            setCategory("");
+          }}
+          className={inputStyles}
+        >
+          <option value="">All projects</option>
+          {(projects ?? []).map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
         </select>
         <select aria-label="Category" value={category} onChange={(e) => setCategory(e.target.value)} className={inputStyles}>
           <option value="">All categories</option>
@@ -133,6 +156,11 @@ export function Ledger({ period, onEdit }: { period: Period; onEdit: (entry: Fin
                   </td>
                   <td className="max-w-[16rem] py-3 pr-3">
                     <p className="font-medium text-ink">{e.description}</p>
+                    {e.projectId && (
+                      <span className="mt-0.5 inline-flex rounded-full bg-lavender px-2 py-0.5 text-[0.7rem] font-semibold text-[#3b4bb8]">
+                        {projectName.get(e.projectId) ?? "Deleted project"}
+                      </span>
+                    )}
                     {(e.reference || e.paymentMethod) && (
                       <p className="text-xs text-muted">{[e.paymentMethod, e.reference].filter(Boolean).join(" · ")}</p>
                     )}

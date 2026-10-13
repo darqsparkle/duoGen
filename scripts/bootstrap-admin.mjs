@@ -62,6 +62,14 @@ await db.runTransaction(async (tx) => {
     { merge: true },
   );
 });
+await db.collection("directory").doc(user.uid).set({
+  uid: user.uid,
+  name: args.name.trim(),
+  username,
+  tagline: args.tagline.trim(),
+  role: "admin",
+  active: true,
+});
 await auth.updateUser(user.uid, { displayName: args.name.trim(), emailVerified: true });
 console.log(`✓ ${user.email} is now an admin (@${username}).`);
 process.exit(0);

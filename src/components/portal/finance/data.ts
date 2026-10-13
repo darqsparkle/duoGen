@@ -55,6 +55,7 @@ export function chartStart(period: Period, now = new Date()) {
 function toEntry(id: string, data: Record<string, unknown>): FinanceEntry {
   return {
     id,
+    projectId: String(data.projectId ?? ""),
     type: data.type as EntryType,
     amount: Number(data.amount) || 0,
     category: String(data.category ?? ""),
@@ -71,16 +72,18 @@ function toEntry(id: string, data: Record<string, unknown>): FinanceEntry {
 /**
  * Live finance entries, newest first. Equality filters run in Firestore and use
  * the composite indexes in firestore.indexes.json:
- *   (type, date desc) · (category, date desc)
+ *   (type, date desc) · (category, date desc) · (projectId, date desc)
  */
 export function useFinanceEntries({
   start,
   type,
   category,
+  projectId,
 }: {
   start: Date | null;
   type?: EntryType | "all";
   category?: string;
+  projectId?: string;
 }) {
   const [entries, setEntries] = useState<FinanceEntry[] | null>(null);
   const [error, setError] = useState("");
@@ -88,7 +91,8 @@ export function useFinanceEntries({
 
   useEffect(() => {
     const constraints: QueryConstraint[] = [];
-    if (category) constraints.push(where("category", "==", category));
+    if (projectId) constraints.push(where("projectId", "==", projectId));
+    else if (category) constraints.push(where("category", "==", category));
     else if (type && type !== "all") constraints.push(where("type", "==", type));
     if (startMs !== null) constraints.push(where("date", ">=", Timestamp.fromMillis(startMs)));
     constraints.push(orderBy("date", "desc"), limit(5000));
@@ -111,7 +115,7 @@ export function useFinanceEntries({
         setEntries([]);
       },
     );
-  }, [startMs, type, category]);
+  }, [startMs, type, category, projectId]);
 
   return { entries, error };
 }
@@ -157,4 +161,11 @@ export function monthlySeries(entries: FinanceEntry[], from: Date | null, now = 
     if (point) point[e.type] += e.amount;
   }
   return points;
+}
+
+/** Income per project (untagged income excluded), largest first. */
+export function incomeByProject(entries: FinanceEntry[]) {
+  const out = new Map<string, number>();
+  for (const e of entries) if (e.type === "income" && e.projectId) out.set(e.projectId, (out.get(e.projectId) ?? 0) + e.amount);
+  return [...out.entries()].sort((a, b) => b[1] - a[1]);
 }

@@ -6,7 +6,9 @@ import { inr } from "@/lib/portal/model";
 import { CategoryDonut } from "../charts/CategoryDonut";
 import { MonthlyBars } from "../charts/MonthlyBars";
 import { Card, Notice, StatTile } from "../ui";
-import { categoryTotals, chartStart, monthlySeries, periodStart, PERIODS, totals, useFinanceEntries, type Period } from "./data";
+import { categoryTotals, chartStart, incomeByProject, monthlySeries, periodStart, PERIODS, totals, useFinanceEntries, type Period } from "./data";
+import { useProjects } from "../projects/data";
+import { SERIES } from "../charts/MonthlyBars";
 
 /** KPIs, monthly growth bars, and category donuts for a period. */
 export function FinanceSummary({ period }: { period: Period }) {
@@ -21,6 +23,9 @@ export function FinanceSummary({ period }: { period: Period }) {
   );
   const kpi = totals(inPeriod);
   const monthly = useMemo(() => monthlySeries(entries ?? [], from), [entries, from]);
+  const { projects } = useProjects();
+  const byProject = useMemo(() => incomeByProject(inPeriod), [inPeriod]);
+  const projectName = useMemo(() => new Map((projects ?? []).map((p) => [p.id, p.name])), [projects]);
 
   if (error) return <Notice>{error}</Notice>;
   if (!entries) {
@@ -65,6 +70,29 @@ export function FinanceSummary({ period }: { period: Period }) {
           <CategoryDonut type="income" totals={categoryTotals(inPeriod, "income")} />
         </Card>
       </div>
+
+      <Card>
+        <h2 className="font-display text-lg font-semibold">Income by project</h2>
+        <p className="mb-4 text-xs text-muted">Income tagged to a project in this period.</p>
+        {byProject.length === 0 ? (
+          <p className="py-6 text-center text-sm text-muted">No project-tagged income in this period.</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {byProject.map(([id, amount]) => (
+              <li key={id} className="grid grid-cols-[minmax(0,10rem)_1fr_auto] items-center gap-3 text-sm sm:grid-cols-[minmax(0,14rem)_1fr_auto]">
+                <span className="truncate text-ink/85">{projectName.get(id) ?? "Deleted project"}</span>
+                <span className="h-3 rounded-r-[4px] bg-lilac">
+                  <span
+                    className="block h-full rounded-r-[4px]"
+                    style={{ width: `${(amount / byProject[0][1]) * 100}%`, background: SERIES.income.color }}
+                  />
+                </span>
+                <span className="font-medium tabular-nums">{inr.format(amount)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
     </div>
   );
 }

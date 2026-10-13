@@ -38,6 +38,11 @@ function adminApp() {
 export const adminAuth = () => getAuth(adminApp());
 export const adminDb = () => getFirestore(adminApp());
 
+/** The staff-directory card for a user: what managers may see (no email/sex). */
+export function directoryCard(p: { uid: string; name: string; username: string; tagline: string; role: string; active: boolean }) {
+  return { uid: p.uid, name: p.name, username: p.username, tagline: p.tagline, role: p.role, active: p.active };
+}
+
 export class HttpError extends Error {
   constructor(
     public status: number,

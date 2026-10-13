@@ -1,5 +1,5 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { adminAuth, adminDb, errorResponse, HttpError, requireRole } from "@/lib/firebase/admin";
+import { adminAuth, adminDb, directoryCard, errorResponse, HttpError, requireRole } from "@/lib/firebase/admin";
 import { normalizeUsername, validateUserInput, type UserInput } from "@/lib/portal/model";
 
 /** Edit a portal user (admin only). Password is optional — set it to reset. */
@@ -58,6 +58,10 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/portal/use
         updatedAt: FieldValue.serverTimestamp(),
         updatedBy: adminUid,
       });
+      tx.set(
+        db.collection("directory").doc(uid),
+        directoryCard({ uid, name: body.name.trim(), username, tagline: body.tagline.trim(), role: body.role, active }),
+      );
     });
 
     // Signed-in sessions of a deactivated user end immediately.
@@ -88,6 +92,7 @@ export async function DELETE(request: Request, ctx: RouteContext<"/api/portal/us
     });
     const batch = db.batch();
     batch.delete(userRef);
+    batch.delete(db.collection("directory").doc(uid));
     if (current.username) batch.delete(db.collection("usernames").doc(current.username));
     await batch.commit();
     return Response.json({ ok: true });

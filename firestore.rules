@@ -26,6 +26,14 @@ service cloud.firestore {
       return hasRole(['admin']);
     }
 
+    function isLead() {
+      return hasRole(['admin', 'manager']);
+    }
+
+    function optionalTimestamp(data, field) {
+      return data[field] == null || data[field] is timestamp;
+    }
+
     function str(data, field, min, max) {
       return data[field] is string && data[field].size() >= min && data[field].size() <= max;
     }
@@ -35,6 +43,13 @@ service cloud.firestore {
     // All writes go through the server API (admin-only), so none from clients.
     match /users/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // Staff directory (name, username, designation, role — no email or sex) so
+    // managers can assign people to projects. Written by the server only.
+    match /directory/{uid} {
+      allow read: if isLead();
       allow write: if false;
     }
 
@@ -76,7 +91,8 @@ service cloud.firestore {
     function validEntry(d) {
       return d.keys().hasOnly([
             'type', 'amount', 'category', 'date', 'description', 'party', 'paymentMethod',
-            'reference', 'status', 'notes', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+            'reference', 'status', 'notes', 'projectId', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+        && (!('projectId' in d) || str(d, 'projectId', 0, 40))
         && d.type in ['income', 'expense']
         && (d.amount is int || d.amount is float)
         && d.amount > 0 && d.amount <= 1000000000
@@ -103,6 +119,55 @@ service cloud.firestore {
         && request.resource.data.createdBy == resource.data.createdBy
         && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isAdmin();
+    }
+
+    // --- Projects (admins and managers) -------------------------------------
+    function validProject(d) {
+      return d.keys().hasOnly([
+            'name', 'codeName', 'client', 'description', 'budget', 'status', 'estDelivery',
+            'nextCallDate', 'progress', 'milestones', 'members', 'memberIds',
+            'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+        && str(d, 'name', 2, 120)
+        && str(d, 'codeName', 0, 60)
+        && str(d, 'client', 0, 120)
+        && str(d, 'description', 0, 2000)
+        && (d.budget is int || d.budget is float) && d.budget >= 0 && d.budget <= 10000000000
+        && d.status in ['tentative', 'confirmed', 'active', 'on-hold', 'completed', 'cancelled']
+        && optionalTimestamp(d, 'estDelivery')
+        && optionalTimestamp(d, 'nextCallDate')
+        && (d.progress is int || d.progress is float) && d.progress >= 0 && d.progress <= 100
+        && d.milestones is list && d.milestones.size() <= 60
+        && d.members is list && d.members.size() <= 60
+        && d.memberIds is list && d.memberIds.size() <= 60
+        && d.updatedBy == request.auth.uid
+        && d.updatedAt == request.time;
+    }
+
+    match /projects/{id} {
+      allow read: if isLead();
+      allow create: if isLead()
+        && validProject(request.resource.data)
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if isLead()
+        && validProject(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+
+      // Progress log entries: append-only for leads; admins may delete.
+      match /updates/{updateId} {
+        allow read: if isLead();
+        allow create: if isLead()
+          && request.resource.data.keys().hasOnly(['text', 'progress', 'by', 'byName', 'createdAt'])
+          && str(request.resource.data, 'text', 1, 2000)
+          && str(request.resource.data, 'byName', 0, 80)
+          && (request.resource.data.progress is int || request.resource.data.progress is float)
+          && request.resource.data.progress >= 0 && request.resource.data.progress <= 100
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+        allow delete: if isAdmin();
+      }
     }
 
     // Everything else is closed.

@@ -7,12 +7,14 @@ import { firebaseApp } from "@/lib/firebase/client";
 import { CATEGORIES, ENTRY_STATUSES, PAYMENT_METHODS, type EntryType, type FinanceEntry } from "@/lib/portal/model";
 import { cn } from "@/lib/cn";
 import { usePortal } from "../PortalProvider";
+import { useProjects } from "../projects/data";
 import { buttonStyles, Field, inputStyles, Modal, Notice } from "../ui";
 
 const toInputDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 type Draft = {
+  projectId: string;
   type: EntryType;
   amount: string;
   date: string;
@@ -26,12 +28,23 @@ type Draft = {
 };
 
 /** Add or edit an income/expense entry. Firestore rules re-validate every field. */
-export function EntryForm({ entry, onClose }: { entry?: FinanceEntry; onClose: () => void }) {
+export function EntryForm({
+  entry,
+  defaults,
+  onClose,
+}: {
+  entry?: FinanceEntry;
+  /** Prefills for a new entry, e.g. from a project's finance tab. */
+  defaults?: Partial<Pick<Draft, "type" | "projectId" | "category">>;
+  onClose: () => void;
+}) {
   const { user } = usePortal();
+  const { projects } = useProjects();
   const [draft, setDraft] = useState<Draft>(() =>
     entry
       ? { ...entry, amount: String(entry.amount), date: toInputDate(entry.date) }
       : {
+          projectId: "",
           type: "expense",
           amount: "",
           date: toInputDate(new Date()),
@@ -42,6 +55,7 @@ export function EntryForm({ entry, onClose }: { entry?: FinanceEntry; onClose: (
           reference: "",
           status: "completed",
           notes: "",
+          ...defaults,
         },
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Draft, string>>>({});
@@ -69,6 +83,7 @@ export function EntryForm({ entry, onClose }: { entry?: FinanceEntry; onClose: (
     setFailure("");
     const [y, m, d] = draft.date.split("-").map(Number);
     const fields = {
+      projectId: draft.projectId,
       type: draft.type,
       amount: Math.round(Number(draft.amount) * 100) / 100,
       category: draft.category,
@@ -164,6 +179,17 @@ export function EntryForm({ entry, onClose }: { entry?: FinanceEntry; onClose: (
             <select value={draft.paymentMethod} onChange={(e) => set("paymentMethod", e.target.value)} className={inputStyles}>
               {PAYMENT_METHODS.map((m) => (
                 <option key={m}>{m}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Project" hint={draft.type === "income" ? "Tag income to track revenue per project." : "Optional — tag project costs."}>
+            <select value={draft.projectId} onChange={(e) => set("projectId", e.target.value)} className={inputStyles}>
+              <option value="">No project</option>
+              {(projects ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                  {p.codeName ? ` (${p.codeName})` : ""}
+                </option>
               ))}
             </select>
           </Field>

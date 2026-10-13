@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Briefcase,
   ExternalLink,
+  FolderKanban,
   Inbox,
   LayoutDashboard,
   LoaderCircle,
@@ -27,6 +28,7 @@ type NavItem = { href: string; label: string; icon: LucideIcon; roles: Role[] };
 /** Sidebar entries; each is shown only to the roles listed. */
 export const PORTAL_NAV: NavItem[] = [
   { href: "/portal", label: "Overview", icon: LayoutDashboard, roles: ["admin", "manager", "employee"] },
+  { href: "/portal/projects", label: "Projects", icon: FolderKanban, roles: ["admin", "manager"] },
   { href: "/portal/finance", label: "Finance", icon: Wallet, roles: ["admin"] },
   { href: "/portal/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/portal/enquiries", label: "Enquiries", icon: Inbox, roles: ["admin", "manager"] },

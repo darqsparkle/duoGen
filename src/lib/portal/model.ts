@@ -116,6 +116,8 @@ export type EntryStatus = (typeof ENTRY_STATUSES)[number];
 
 export type FinanceEntry = {
   id: string;
+  /** Optional project tag ("" when untagged). */
+  projectId: string;
   type: EntryType;
   amount: number;
   category: string;
@@ -138,3 +140,75 @@ export const inrCompact = new Intl.NumberFormat("en-IN", {
   notation: "compact",
   maximumFractionDigits: 1,
 });
+
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
+
+export const PROJECT_STATUSES = ["tentative", "confirmed", "active", "on-hold", "completed", "cancelled"] as const;
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
+
+export const PROJECT_STATUS_LABEL: Record<ProjectStatus, string> = {
+  tentative: "Tentative",
+  confirmed: "Confirmed",
+  active: "In progress",
+  "on-hold": "On hold",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
+/** Statuses that still count as live work in the pipeline. */
+export const OPEN_PROJECT_STATUSES: ProjectStatus[] = ["tentative", "confirmed", "active", "on-hold"];
+
+export type Milestone = {
+  id: string;
+  title: string;
+  dueDate: Date | null;
+  done: boolean;
+  doneAt: Date | null;
+};
+
+export type ProjectMember = { uid: string; projectRole: string };
+
+export type Project = {
+  id: string;
+  name: string;
+  codeName: string;
+  client: string;
+  description: string;
+  budget: number;
+  status: ProjectStatus;
+  estDelivery: Date | null;
+  nextCallDate: Date | null;
+  progress: number;
+  milestones: Milestone[];
+  members: ProjectMember[];
+  memberIds: string[];
+  updatedAt: Date | null;
+};
+
+/** Public-ish staff card (no email/sex) — readable by admins and managers. */
+export type DirectoryEntry = {
+  uid: string;
+  name: string;
+  username: string;
+  tagline: string;
+  role: Role;
+  active: boolean;
+};
+
+export const PROJECT_ROLE_SUGGESTIONS = [
+  "Project Lead",
+  "Developer",
+  "Frontend Developer",
+  "Backend Developer",
+  "Designer",
+  "QA / Tester",
+  "Account Manager",
+];
+
+/** Percentage of milestones done (0 when there are none). */
+export function milestoneProgress(milestones: Milestone[]) {
+  if (!milestones.length) return 0;
+  return Math.round((milestones.filter((m) => m.done).length / milestones.length) * 100);
+}
