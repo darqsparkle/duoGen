@@ -140,6 +140,15 @@ body {
   overflow-x: clip;
 }
 
+/* iOS Safari before 16 ignores overflow: clip, so off-screen offsets widen the
+   page there. hidden is the closest fallback; sticky is desktop-only anyway. */
+@supports not (overflow: clip) {
+  body,
+  .overflow-x-clip {
+    overflow-x: hidden;
+  }
+}
+
 ::selection {
   background: var(--color-glow);
   color: var(--color-navy);
@@ -282,9 +291,17 @@ html.js .reveal[data-in="true"] {
   filter: none;
 }
 
+/* Phones: no blur. Dozens of blurred, transformed layers exhaust GPU memory on
+   older iPhones, and Safari then paints empty backgrounds instead of content. */
 @media (width < 48rem) {
   .reveal {
     --reveal-distance: 20px;
+  }
+  html.js .reveal {
+    filter: none;
+    transition:
+      opacity 0.6s var(--ease-out-expo) var(--reveal-delay, 0ms),
+      transform 0.7s var(--ease-out-expo) var(--reveal-delay, 0ms);
   }
 }
 

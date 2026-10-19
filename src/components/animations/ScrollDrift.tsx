@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 /**
  * Moves an element along (x, y) as the page scrolls through its first
  * `distance` pixels. Used to push hero objects outward as the visitor leaves.
- * Movement is reduced on small screens and disabled under reduced motion.
+ * Disabled on phones (see ScrollScene) and under reduced motion.
  */
 export function ScrollDrift({
   children,
@@ -26,7 +26,7 @@ export function ScrollDrift({
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)");
-    const update = () => setFactor(query.matches ? 0.3 : 1);
+    const update = () => setFactor(query.matches ? 0 : 1);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);

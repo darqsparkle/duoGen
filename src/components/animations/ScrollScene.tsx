@@ -17,6 +17,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
  *
  * mode "inout": full approach + depart (default, for mid-page scenes).
  * mode "out":   departure only (for scenes already on screen at load, e.g. hero).
+ *
+ * Phones get the settled, static frame: on lower-memory iPhones, many
+ * scroll-driven composited layers make Safari drop tiles and paint empty
+ * section backgrounds while scrolling.
  */
 export function ScrollScene({
   children,
@@ -33,11 +37,11 @@ export function ScrollScene({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const [intensity, setIntensity] = useState(1);
+  const [small, setSmall] = useState(false);
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px)");
-    const update = () => setIntensity(query.matches ? 0.5 : 1);
+    const update = () => setSmall(query.matches);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
@@ -48,18 +52,18 @@ export function ScrollScene({
     offset: mode === "out" ? ["start start", "end start"] : ["start end", "end start"],
   });
   const settled = useMotionValue(mode === "out" ? 0 : 0.5);
-  const progress = reduce ? settled : scrollYProgress;
+  const still = reduce || small;
+  const progress = still ? settled : scrollYProgress;
 
-  const k = intensity;
   const scale = useTransform(
     progress,
     mode === "out" ? [0, 1] : [0, 0.4, 0.6, 1],
-    mode === "out" ? [1, 1 + expand * k] : [1 - 0.1 * k, 1, 1, 1 + expand * k],
+    mode === "out" ? [1, 1 + expand] : [1 - 0.1, 1, 1, 1 + expand],
   );
   const y = useTransform(
     progress,
     mode === "out" ? [0, 1] : [0, 0.4, 0.6, 1],
-    mode === "out" ? [0, -drift * k] : [drift * k, 0, 0, -drift * k],
+    mode === "out" ? [0, -drift] : [drift, 0, 0, -drift],
   );
   const opacity = useTransform(
     progress,
@@ -69,7 +73,7 @@ export function ScrollScene({
 
   return (
     <div ref={ref} className={className}>
-      <motion.div style={{ scale, y, opacity }} className="h-full w-full will-change-transform">
+      <motion.div style={{ scale, y, opacity }} className={still ? "h-full w-full" : "h-full w-full will-change-transform"}>
         {children}
       </motion.div>
     </div>
