@@ -3,11 +3,14 @@ import { ArcadeLauncher } from "@/components/games/ArcadeLauncher";
 import { Genie } from "@/components/genie/Genie";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/navigation/Navbar";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 /** Public marketing site chrome: navbar, footer, Genie and the arcade. */
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <>
+      <JsonLd data={[organizationSchema(), websiteSchema()]} />
       <a
         href="#main"
         className="fixed top-3 left-3 z-[90] -translate-y-24 rounded-full bg-glow px-5 py-3 font-medium text-navy transition-transform focus:translate-y-0"

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Reveal } from "@/components/animations/Reveal";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { FaqSection } from "@/components/contact/FaqSection";
 import { PrefilledContactForm } from "@/components/contact/PrefilledContactForm";
 import { FinalCta } from "@/components/home/FinalCta";
 import { LightHero } from "@/components/ui/LightHero";
@@ -63,6 +64,7 @@ export default function ContactPage() {
   return (
     <>
       <LightHero
+        path="/contact"
         eyebrow="Contact / 03"
         title={
           <>
@@ -137,6 +139,8 @@ export default function ContactPage() {
           </aside>
         </div>
       </section>
+
+      <FaqSection />
 
       <FinalCta
         eyebrow="Explore"

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollScene } from "@/components/animations/ScrollScene";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import type { NavPath } from "@/lib/seo";
 import { GlossySculpture } from "@/components/visuals/GlossySculpture";
 import { Eyebrow } from "./SectionHeading";
 
@@ -10,7 +12,9 @@ export function LightHero({
   description,
   actions,
   sculpture,
+  path,
 }: {
+  path: NavPath;
   eyebrow: string;
   title: ReactNode;
   description: string;
@@ -23,6 +27,7 @@ export function LightHero({
       <div aria-hidden className="absolute -top-40 -right-40 -z-10 size-[40rem] rounded-full bg-[radial-gradient(circle,rgb(124_255_178/0.25),transparent_60%)]" />
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
         <div className="flex flex-col gap-7">
+          <Breadcrumbs path={path} />
           <div className="animate-rise">
             <Eyebrow>{eyebrow}</Eyebrow>
           </div>

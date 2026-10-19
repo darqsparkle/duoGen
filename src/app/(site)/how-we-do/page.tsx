@@ -3,6 +3,7 @@ import { Gauge, Layers, ShieldCheck, Target } from "lucide-react";
 import { Reveal } from "@/components/animations/Reveal";
 import { FinalCta } from "@/components/home/FinalCta";
 import { ProcessTimeline } from "@/components/process/ProcessTimeline";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { Marquee } from "@/components/ui/Marquee";
 import { techGroups, technicalPrinciples, workingPrinciples } from "@/lib/process";
@@ -52,7 +53,8 @@ export default function HowWeDoPage() {
         <LineField />
         <div aria-hidden className="absolute bottom-0 left-1/2 -z-10 size-[50rem] -translate-x-1/2 translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgb(124_255_178/0.18),transparent_60%)]" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="animate-rise">
+          <Breadcrumbs path="/how-we-do" tone="dark" />
+          <div className="animate-rise mt-7">
             <Eyebrow tone="dark">Process / 02</Eyebrow>
           </div>
           <h1

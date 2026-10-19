@@ -20,6 +20,7 @@ export default function WhatWeDoPage() {
   return (
     <>
       <LightHero
+        path="/what-we-do"
         eyebrow="Capabilities / 01"
         title={
           <>

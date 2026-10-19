@@ -74,9 +74,11 @@
       opacity: 1;
     }
   }
+  /* 0.01, not 0: Chrome skips opacity: 0 text as a Largest Contentful Paint
+     candidate, and the hero copy is the page's LCP. */
   @keyframes rise {
     from {
-      opacity: 0;
+      opacity: 0.01;
       transform: translate3d(0, 28px, 0);
     }
     to {
