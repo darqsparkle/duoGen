@@ -18,17 +18,24 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 Copy `.env.example` to `.env.local` and fill in what you have. Contact details and social
 links stay hidden on the site until their variable is set — nothing is invented.
 
-## Deploy on Vercel
+## Deploy on Cloudflare Workers
 
-1. Import the GitHub repo in Vercel (framework is detected as Next.js).
-2. Add environment variables (Project → Settings → Environment Variables):
-   - `GEMINI_API_KEY` — your Google AI Studio key (powers Genie's AI answers)
-   - `NEXT_PUBLIC_SITE_URL` — your live domain, e.g. `https://duogen.example`
-   - optional: `GEMINI_MODELS`, `NEXT_PUBLIC_CONTACT_*`, `NEXT_PUBLIC_SOCIAL_*` (see `.env.example`)
-3. Deploy. Changing a variable later requires a redeploy.
+Built with the [OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare); config is in
+`wrangler.jsonc` and `open-next.config.ts`.
 
-`vercel.json` pins functions to the Mumbai region (`bom1`), gives the Genie route up to
-30 seconds (it may retry backup Gemini models), and adds basic security headers.
+1. Cloudflare dashboard → Workers & Pages → Create → Import a repository → this repo.
+   - Build command: `npx opennextjs-cloudflare build`
+   - Deploy command: `npx opennextjs-cloudflare deploy`
+2. Settings → Build → **Variables and secrets** (needed at build time): every `NEXT_PUBLIC_*`
+   value from `.env.example`. Next.js inlines these during the build.
+3. Settings → **Variables and Secrets** (runtime): `GEMINI_API_KEY`, `GEMINI_MODELS`,
+   `FIREBASE_SERVICE_ACCOUNT_BASE64`, `GOOGLE_SITE_VERIFICATION` (as secrets where sensitive).
+4. Add the custom domains (`www.duogen.in`, `duogen.in`) under the Worker's Domains & Routes,
+   and add them to Firebase → Authentication → Authorized domains.
+
+Locally, `npm run preview` builds and serves the Worker with Wrangler.
+
+Security headers are set in `next.config.ts`.
 
 ## Structure
 

@@ -1,15 +1,8 @@
 import Link from "next/link";
-import { cacheLife } from "next/cache";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/navigation/Logo";
 import { contactDetails, navLinks, siteConfig, socialLinks } from "@/lib/constants";
 import { serviceDetails } from "@/lib/services";
-
-async function CopyrightYear() {
-  "use cache";
-  cacheLife("days");
-  return <>{new Date().getFullYear()}</>;
-}
 
 export function Footer() {
   const { email, phone } = contactDetails;
@@ -102,7 +95,7 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © <CopyrightYear /> {siteConfig.name}. All rights reserved.
+            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <p>Designed and engineered in-house.</p>
         </div>

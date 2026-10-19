@@ -1,6 +1,6 @@
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import type { Role } from "@/lib/portal/model";
 
 /**
@@ -36,7 +36,16 @@ function adminApp() {
 }
 
 export const adminAuth = () => getAuth(adminApp());
-export const adminDb = () => getFirestore(adminApp());
+
+let db: Firestore | null = null;
+
+/** REST transport: Cloudflare Workers can't open the gRPC connection Firestore uses by default. */
+export function adminDb() {
+  if (db) return db;
+  db = getFirestore(adminApp());
+  db.settings({ preferRest: true });
+  return db;
+}
 
 /** The staff-directory card for a user: what managers may see (no email/sex). */
 export function directoryCard(p: { uid: string; name: string; username: string; tagline: string; role: string; active: boolean }) {
