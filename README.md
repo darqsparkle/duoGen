@@ -24,8 +24,8 @@ Built with the [OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare)
 `wrangler.jsonc` and `open-next.config.ts`.
 
 1. Cloudflare dashboard → Workers & Pages → Create → Import a repository → this repo.
-   - Build command: `npx opennextjs-cloudflare build`
-   - Deploy command: `npx opennextjs-cloudflare deploy`
+   - Build command: `npm run build` (runs the OpenNext build; `npm run build:next` is plain `next build`)
+   - Deploy command: `npx wrangler deploy`
 2. Settings → Build → **Variables and secrets** (needed at build time): every `NEXT_PUBLIC_*`
    value from `.env.example`. Next.js inlines these during the build.
 3. Settings → **Variables and Secrets** (runtime): `GEMINI_API_KEY`, `GEMINI_MODELS`,
