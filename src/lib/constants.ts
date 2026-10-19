@@ -5,7 +5,11 @@ export const siteConfig = {
   description:
     "We design and build the digital experiences, applications, and intelligent systems that help businesses work smarter and grow.",
   footerTagline: "Built with intent. Designed for what's next.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // Canonical origin for metadata, sitemap.xml and robots.txt. www is the primary
+  // Vercel domain (duogen.in redirects to it), so production defaults to it.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.NODE_ENV === "production" ? "https://www.duogen.in" : "http://localhost:3000"),
 };
 
 export const navLinks = [
@@ -21,12 +25,13 @@ function configured(value: string | undefined) {
 }
 
 /**
- * Official contact details. Every value comes from an environment variable and
- * stays hidden in the UI until it is set — never hard-code placeholder details.
+ * Official contact details. Values come from environment variables and stay
+ * hidden in the UI until set — never hard-code placeholder details. The email
+ * defaults to the real public inbox.
  * NEXT_PUBLIC_* variables must be referenced literally so Next.js can inline them.
  */
 export const contactDetails = {
-  email: configured(process.env.NEXT_PUBLIC_CONTACT_EMAIL),
+  email: configured(process.env.NEXT_PUBLIC_CONTACT_EMAIL) ?? "connect@duogen.in",
   phone: configured(process.env.NEXT_PUBLIC_CONTACT_PHONE),
   whatsapp: configured(process.env.NEXT_PUBLIC_CONTACT_WHATSAPP),
   address: configured(process.env.NEXT_PUBLIC_CONTACT_ADDRESS),
