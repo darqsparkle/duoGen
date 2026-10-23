@@ -2,7 +2,10 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/navigation/Logo";
 import { contactDetails, navLinks, siteConfig, socialLinks } from "@/lib/constants";
+import { CareersFooterLink } from "@/components/navigation/CareersFooterLink";
 import { serviceDetails } from "@/lib/services";
+
+const footerLink = "text-white/75 underline-offset-4 transition-colors hover:text-glow hover:underline";
 
 export function Footer() {
   const { email, phone } = contactDetails;
@@ -23,11 +26,12 @@ export function Footer() {
             <ul className="mt-5 flex flex-col gap-3">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-white/75 underline-offset-4 transition-colors hover:text-glow hover:underline">
+                  <Link href={link.href} className={footerLink}>
                     {link.label}
                   </Link>
                 </li>
               ))}
+              <CareersFooterLink className={footerLink} />
             </ul>
           </nav>
 

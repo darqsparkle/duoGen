@@ -212,3 +212,42 @@ export function milestoneProgress(milestones: Milestone[]) {
   if (!milestones.length) return 0;
   return Math.round((milestones.filter((m) => m.done).length / milestones.length) * 100);
 }
+
+export const WORK_TYPES = ["remote", "hybrid", "on-site"] as const;
+export type WorkType = (typeof WORK_TYPES)[number];
+
+export const WORK_TYPE_LABEL: Record<WorkType, string> = {
+  remote: "Remote",
+  hybrid: "Hybrid",
+  "on-site": "In-office",
+};
+
+/** A job opening shown on the public careers page. */
+export type Career = {
+  id: string;
+  title: string;
+  description: string;
+  pay: string;
+  workType: WorkType;
+  location: string;
+  updatedAt: Date | null;
+};
+
+/** Field limits, mirrored in firestore.rules. */
+export const CAREER_LIMITS = { title: [2, 120], description: [20, 5000], pay: [0, 120], location: [0, 120] } as const;
+
+export type CareerInput = Pick<Career, "title" | "description" | "pay" | "workType" | "location">;
+
+export function validateCareer(input: CareerInput) {
+  const errors: Partial<Record<keyof CareerInput, string>> = {};
+  const title = input.title.trim();
+  const description = input.description.trim();
+  if (title.length < CAREER_LIMITS.title[0]) errors.title = "Enter the role (at least 2 characters).";
+  else if (title.length > CAREER_LIMITS.title[1]) errors.title = "Keep the role under 120 characters.";
+  if (description.length < CAREER_LIMITS.description[0]) errors.description = "Describe the job (at least 20 characters).";
+  else if (description.length > CAREER_LIMITS.description[1]) errors.description = "Keep the description under 5,000 characters.";
+  if (input.pay.trim().length > CAREER_LIMITS.pay[1]) errors.pay = "Keep the pay under 120 characters.";
+  if (input.location.trim().length > CAREER_LIMITS.location[1]) errors.location = "Keep the location under 120 characters.";
+  if (!WORK_TYPES.includes(input.workType)) errors.workType = "Choose a work type.";
+  return errors;
+}

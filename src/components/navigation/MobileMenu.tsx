@@ -4,9 +4,10 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRight, X } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { navLinks, siteConfig } from "@/lib/constants";
+import { siteConfig } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
+import { useNavLinks } from "./useNavLinks";
 
 export function MobileMenu({
   open,
@@ -19,6 +20,7 @@ export function MobileMenu({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const navLinks = useNavLinks();
 
   useEffect(() => {
     if (!open) return;

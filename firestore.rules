@@ -170,6 +170,33 @@ service cloud.firestore {
       }
     }
 
+    // --- Careers (public job openings; admins manage them) --------------------
+    function validCareer(d) {
+      return d.keys().hasOnly([
+            'title', 'description', 'pay', 'workType', 'location',
+            'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+        && str(d, 'title', 2, 120)
+        && str(d, 'description', 20, 5000)
+        && str(d, 'pay', 0, 120)
+        && d.workType in ['remote', 'hybrid', 'on-site']
+        && str(d, 'location', 0, 120)
+        && d.updatedBy == request.auth.uid
+        && d.updatedAt == request.time;
+    }
+
+    match /careers/{id} {
+      allow read: if true;
+      allow create: if isAdmin()
+        && validCareer(request.resource.data)
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin()
+        && validCareer(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+    }
+
     // Everything else is closed.
     match /{document=**} {
       allow read, write: if false;

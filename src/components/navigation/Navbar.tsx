@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { ArrowRight, Menu } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { navLinks } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
 import { MobileMenu } from "./MobileMenu";
+import { useNavLinks } from "./useNavLinks";
 
 type Theme = "dark" | "light";
 
@@ -25,6 +25,7 @@ function sceneThemeAt(y: number): Theme {
 
 export function Navbar() {
   const pathname = usePathname();
+  const navLinks = useNavLinks();
   const [theme, setTheme] = useState<Theme>("dark");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

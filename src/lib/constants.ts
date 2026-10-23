@@ -19,6 +19,9 @@ export const navLinks = [
   { href: "/contact", label: "Contact Us" },
 ] as const;
 
+/** Shown in the nav and footer only while roles are open (see useNavLinks). */
+export const careersLink = { href: "/careers", label: "Careers" } as const;
+
 function configured(value: string | undefined) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : undefined;

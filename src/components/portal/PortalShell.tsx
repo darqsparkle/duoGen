@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Briefcase,
+  BriefcaseBusiness,
   ExternalLink,
   FolderKanban,
   Inbox,
@@ -32,6 +33,7 @@ export const PORTAL_NAV: NavItem[] = [
   { href: "/portal/finance", label: "Finance", icon: Wallet, roles: ["admin"] },
   { href: "/portal/users", label: "Users", icon: Users, roles: ["admin"] },
   { href: "/portal/enquiries", label: "Enquiries", icon: Inbox, roles: ["admin", "manager"] },
+  { href: "/portal/careers", label: "Careers", icon: BriefcaseBusiness, roles: ["admin"] },
   { href: "/portal/manager", label: "Manager panel", icon: Briefcase, roles: ["admin", "manager"] },
   { href: "/portal/employee", label: "Employee panel", icon: UserCog, roles: ["admin", "employee"] },
 ];

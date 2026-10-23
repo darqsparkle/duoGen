@@ -1,4 +1,4 @@
-import { contactDetails, navLinks, siteConfig, socialLinks } from "./constants";
+import { careersLink, contactDetails, navLinks, siteConfig, socialLinks } from "./constants";
 
 /** schema.org structured data builders, rendered with <JsonLd />. */
 
@@ -34,12 +34,12 @@ export function websiteSchema() {
   };
 }
 
-export type NavPath = (typeof navLinks)[number]["href"];
+export type NavPath = (typeof navLinks)[number]["href"] | typeof careersLink.href;
 
 /** Home › page trail for a top-level page. */
 export function breadcrumbTrail(path: NavPath) {
   const home = navLinks[0];
-  const page = navLinks.find((link) => link.href === path) ?? home;
+  const page = [...navLinks, careersLink].find((link) => link.href === path) ?? home;
   return page === home ? [home] : [home, page];
 }
 
