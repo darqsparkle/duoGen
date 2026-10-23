@@ -15,7 +15,7 @@ import { enquiriesEnabled } from "@/lib/enquiry";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Talk to app and software developers serving Chennai, Salem and clients worldwide. Tell us about your business or idea — no technical specification needed.",
+    "Talk to app and software developers who work with businesses worldwide. Tell us about your business or idea — no technical specification needed.",
   alternates: { canonical: "/contact" },
 };
 

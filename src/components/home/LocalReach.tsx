@@ -1,27 +1,27 @@
 import Link from "next/link";
-import { ArrowUpRight, Globe2, MapPin } from "lucide-react";
+import { ArrowUpRight, Globe2, MapPin, Video } from "lucide-react";
 import { Reveal } from "@/components/animations/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const places = [
   {
     icon: MapPin,
-    title: "Chennai",
-    text: "Websites, web apps and mobile apps for Chennai businesses — whether you run a startup, a clinic, a factory, a shop or a service firm.",
-  },
-  {
-    icon: MapPin,
-    title: "Salem",
-    text: "Custom software, e-commerce and business apps for Salem companies — in textiles, agriculture, trading, manufacturing or any other sector.",
+    title: "Across India",
+    text: "Websites, web and mobile apps, and business software for companies in every part of the country — from startups to established firms.",
   },
   {
     icon: Globe2,
-    title: "Clients outside India",
-    text: "We work remotely with businesses abroad: clear written updates, regular video calls, and project agreements that cover how your data is handled.",
+    title: "Around the world",
+    text: "We build for businesses outside India too, with project agreements that cover scope, ownership and how your data is handled.",
+  },
+  {
+    icon: Video,
+    title: "Wherever you are",
+    text: "Clear written updates, regular video calls and shared progress, so working with us is just as easy from another city or another country.",
   },
 ];
 
-/** Where we work — visible local context for Chennai and Salem searches, plus international clients. */
+/** Where we work — India and international clients. */
 export function LocalReach() {
   return (
     <section data-nav="light" aria-labelledby="local-title" className="scene-sheet bg-white pt-24 pb-32 md:pt-32 md:pb-40">
@@ -30,11 +30,11 @@ export function LocalReach() {
           eyebrow="Where we work"
           title={
             <span id="local-title">
-              App and software developers for{" "}
-              <span className="text-glow-gradient">Chennai, Salem and beyond.</span>
+              App and software developers{" "}
+              <span className="text-glow-gradient">for businesses everywhere.</span>
             </span>
           }
-          description="Looking for application developers near you? We build websites, web and mobile apps and business software for companies across Tamil Nadu, the rest of India and overseas."
+          description="Based in India, working with clients across the country and around the world. Tell us what you need, wherever you are."
         />
 
         <ul className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3">

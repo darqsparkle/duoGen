@@ -339,8 +339,8 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="animate-rise max-w-2xl text-base leading-relaxed text-muted sm:text-lg" style={{ animationDelay: "160ms" }}>
-            Plain-language answers on what we collect, why, and the choices you have — whether you&apos;re in Chennai,
-            Salem or anywhere else in the world.
+            Plain-language answers on what we collect, why, and the choices you have — wherever in the world you
+            are.
           </p>
           <p className="text-sm text-muted">Last updated: {LAST_UPDATED}</p>
 

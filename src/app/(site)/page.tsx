@@ -10,9 +10,9 @@ import { FinalCta } from "@/components/home/FinalCta";
 import { LocalReach } from "@/components/home/LocalReach";
 
 export const metadata: Metadata = {
-  title: { absolute: "App & Software Developers in Chennai and Salem | DuoGen Tech Solutions" },
+  title: { absolute: "App & Software Development Company | DuoGen Tech Solutions" },
   description:
-    "DuoGen Tech Solutions builds websites, web and mobile apps, and custom business software for companies in Chennai, Salem, across India and worldwide.",
+    "DuoGen Tech Solutions builds websites, web and mobile apps, and custom business software for companies in India and around the world.",
   alternates: { canonical: "/" },
 };
 

@@ -36,9 +36,9 @@ export const faqs = [
       "Launch steps and post-launch support expectations are agreed before development begins. After launch we review feedback and can continue with enhancements, integrations, and maintenance where agreed.",
   },
   {
-    question: "Do you work with businesses in Chennai and Salem?",
+    question: "Where are your clients based?",
     answer:
-      "Yes. We build websites, web and mobile apps, and business software for companies in Chennai, Salem and across Tamil Nadu, as well as the rest of India.",
+      "Anywhere. We build websites, web and mobile apps, and business software for companies across India and in other countries, and we can work fully remotely.",
   },
   {
     question: "Do you work with clients outside India?",

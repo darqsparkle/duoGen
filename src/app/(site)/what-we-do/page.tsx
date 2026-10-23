@@ -12,7 +12,7 @@ import { serviceDetails } from "@/lib/services";
 export const metadata: Metadata = {
   title: "What We Do",
   description:
-    "Websites, e-commerce, business software, CRM, web and mobile app development, automation and integrations for businesses in Chennai, Salem and worldwide.",
+    "Websites, e-commerce, business software, CRM, web and mobile app development, automation and integrations for businesses worldwide.",
   alternates: { canonical: "/what-we-do" },
 };
 

@@ -105,7 +105,7 @@ export function Footer() {
             <Link href={privacyLink.href} className="underline-offset-4 hover:text-white hover:underline">
               {privacyLink.label}
             </Link>
-            <span>Serving Chennai, Salem and clients worldwide.</span>
+            <span>Serving clients in India and worldwide.</span>
           </p>
         </div>
       </div>

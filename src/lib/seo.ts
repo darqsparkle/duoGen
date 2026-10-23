@@ -2,6 +2,29 @@ import { careersLink, contactDetails, navLinks, privacyLink, siteConfig, socialL
 
 /** schema.org structured data builders, rendered with <JsonLd />. */
 
+/**
+ * Cities we serve. Only in structured data and the keywords meta tag, never as
+ * on-page text: Google treats hidden or stuffed city lists as spam.
+ */
+export const servedCities = [
+  // Tamil Nadu
+  "Chennai", "Salem", "Coimbatore", "Madurai", "Tiruchirappalli", "Erode", "Tiruppur", "Vellore",
+  // Rest of India
+  "Bengaluru", "Hyderabad", "Mumbai", "Pune", "Delhi", "Gurugram", "Noida", "Kolkata", "Ahmedabad", "Kochi", "Jaipur",
+  // International
+  "Dubai", "Abu Dhabi", "Riyadh", "Doha", "Singapore", "Kuala Lumpur", "London", "New York", "San Francisco", "Toronto", "Sydney", "Melbourne",
+];
+
+/** Search phrases for the keywords meta tag (ignored by Google, read by some other engines). */
+export const seoKeywords = [
+  "app developers",
+  "application developers near me",
+  "mobile app development company",
+  "software development company",
+  "web development company",
+  ...servedCities.flatMap((city) => [`app developers in ${city}`, `software company in ${city}`]),
+];
+
 const absolute = (path: string) => new URL(path, siteConfig.url).toString();
 const organizationId = absolute("/#organization");
 
@@ -16,13 +39,7 @@ export function organizationSchema() {
     url: absolute("/"),
     logo: absolute("/icon.svg"),
     description: siteConfig.description,
-    areaServed: [
-      { "@type": "City", name: "Chennai", containedInPlace: { "@type": "State", name: "Tamil Nadu" } },
-      { "@type": "City", name: "Salem", containedInPlace: { "@type": "State", name: "Tamil Nadu" } },
-      { "@type": "State", name: "Tamil Nadu" },
-      { "@type": "Country", name: "India" },
-      "Worldwide",
-    ],
+    areaServed: [...servedCities.map((name) => ({ "@type": "City", name })), { "@type": "Country", name: "India" }, "Worldwide"],
     knowsAbout: [
       "Mobile app development",
       "Web application development",
