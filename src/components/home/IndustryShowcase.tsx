@@ -1,40 +1,48 @@
-"use client";
-
 import Link from "next/link";
 import {
   ArrowUpRight,
   Briefcase,
   Building2,
+  Car,
+  Cpu,
   Factory,
-  Plus,
+  FlaskConical,
+  GraduationCap,
+  Landmark,
+  Megaphone,
+  Rocket,
+  ShoppingBag,
+  Sprout,
   Stethoscope,
   Store,
-  TrendingUp,
+  Truck,
+  UtensilsCrossed,
 } from "lucide-react";
-import { useState } from "react";
 import { Reveal } from "@/components/animations/Reveal";
+import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { industries, type IndustryIcon } from "@/lib/industries";
-import { cn } from "@/lib/cn";
-import { IndustryPreview } from "./IndustryPreview";
 
 const icons: Record<IndustryIcon, typeof Factory> = {
-  factory: Factory,
   stethoscope: Stethoscope,
-  building: Building2,
+  flask: FlaskConical,
+  factory: Factory,
   store: Store,
-  trending: TrendingUp,
+  graduation: GraduationCap,
+  landmark: Landmark,
+  truck: Truck,
+  building: Building2,
+  utensils: UtensilsCrossed,
+  sprout: Sprout,
+  car: Car,
+  megaphone: Megaphone,
   briefcase: Briefcase,
+  bag: ShoppingBag,
+  cpu: Cpu,
+  rocket: Rocket,
 };
 
-/** Panels converge toward the centre column as they enter. */
-const directions = ["left", "scale", "right"] as const;
-
 export function IndustryShowcase() {
-  // Explicit open state powers tap/keyboard on touch and small screens.
-  // On large screens the details also appear on hover and focus (CSS).
-  const [open, setOpen] = useState<string | null>(null);
-
   return (
     <section
       data-nav="dark"
@@ -47,101 +55,71 @@ export function IndustryShowcase() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           tone="dark"
-          eyebrow="Industries"
+          eyebrow="Industries we work with"
           title={
             <span id="industries-title">
-              Different industries.
+              One tech partner
               <br />
-              Different challenges.
-              <br />
-              <span className="text-glow-gradient">Purpose-built solutions.</span>
+              <span className="text-glow-gradient">for many industries.</span>
             </span>
           }
-          description="Every sector runs differently. Here are a few of the problems we help solve — previews are illustrative, not client projects."
+          description={
+            <>
+              Every business works in its own way. Some need more customers. Some need a clearer view
+              of what&apos;s happening day to day. Others want to stop doing the same tasks by hand, get
+              their tools working together, or build software around the way they already work.
+              <br />
+              <br />
+              At DuoGen, we help you find what&apos;s holding your business back and build simple,
+              practical tools to fix it.
+            </>
+          }
         />
 
-        <ul className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+        <ul className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map((industry, index) => {
             const Icon = icons[industry.icon];
-            const isOpen = open === industry.id;
-            const detailsId = `industry-${industry.id}`;
             return (
-              <Reveal as="li" key={industry.id} dir={directions[index % 3]} delay={(index % 3) * 80} className="min-w-0">
-                <article
-                  data-open={isOpen}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-midnight/80 transition-colors duration-500 hover:border-glow/40 data-[open=true]:border-glow/40 lg:min-h-[400px]"
+              <Reveal as="li" key={industry.id} delay={(index % 4) * 60} className="min-w-0">
+                <Link
+                  href={`/contact?industry=${industry.id}`}
+                  className="group flex h-full flex-col gap-4 rounded-[1.5rem] border border-white/10 bg-midnight/80 p-6 transition-colors duration-500 hover:border-glow/40 focus-visible:border-glow/60"
                 >
-                  {/* Summary face */}
-                  <div className="flex flex-1 flex-col gap-5 p-6 transition-opacity duration-500 sm:p-7 lg:group-focus-within:opacity-0 lg:group-hover:opacity-0 lg:group-data-[open=true]:opacity-0">
-                    {/* The SVG is absolutely placed so it can't feed its intrinsic
-                        size back into the aspect-ratio box: iOS Safari otherwise
-                        sizes this box from the SVG and blows the card past the viewport. */}
-                    <div className="relative aspect-[2/1] w-full shrink-0 rounded-2xl border border-white/10 bg-navy/60">
-                      <div className="absolute inset-3">
-                        <IndustryPreview preview={industry.preview} />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="inline-flex size-10 items-center justify-center rounded-xl bg-glow/10 text-glow" aria-hidden>
-                        <Icon className="size-5" />
-                      </span>
-                      <h3 className="font-display text-xl font-semibold tracking-tight">
-                        {industry.name}
-                      </h3>
-                    </div>
-                    <p className="text-sm leading-relaxed text-white/60">{industry.summary}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-glow/10 text-glow" aria-hidden>
+                      <Icon className="size-5" />
+                    </span>
+                    <ArrowUpRight aria-hidden className="size-4 text-white/30 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-glow" />
                   </div>
-
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={detailsId}
-                    onClick={() => setOpen(isOpen ? null : industry.id)}
-                    className="relative z-20 mx-6 mb-6 flex min-h-11 items-center justify-between gap-3 rounded-full border border-white/15 px-5 text-sm font-medium text-white/80 transition-colors hover:border-glow/50 hover:text-white sm:mx-7 lg:absolute lg:right-0 lg:bottom-0 lg:left-0"
-                  >
-                    {isOpen ? "Hide the solution" : "See the challenge and solution"}
-                    <Plus aria-hidden className={cn("size-4 transition-transform duration-300", isOpen && "rotate-45")} />
-                  </button>
-
-                  {/* Details: accordion on small screens, overlay on large screens */}
-                  <div
-                    id={detailsId}
-                    className={cn(
-                      "grid transition-all duration-500 ease-out-expo",
-                      isOpen ? "visible grid-rows-[1fr] opacity-100" : "invisible grid-rows-[0fr] opacity-0",
-                      "lg:visible lg:absolute lg:inset-0 lg:grid-rows-[1fr] lg:bg-midnight",
-                      "lg:group-focus-within:opacity-100 lg:group-hover:opacity-100",
-                    )}
-                  >
-                    <div className="overflow-hidden">
-                      <div className="flex flex-col gap-5 px-6 pb-6 sm:px-7 lg:h-full lg:pt-7 lg:pb-24">
-                        <div className="hidden items-center gap-3 lg:flex">
-                          <Icon aria-hidden className="size-5 text-glow" />
-                          <p className="font-display text-lg font-semibold">{industry.name}</p>
-                        </div>
-                        <div>
-                          <p className="font-mono text-[0.65rem] tracking-[0.22em] text-white/45 uppercase">The challenge</p>
-                          <p className="mt-2 text-sm leading-relaxed text-white/75">{industry.problem}</p>
-                        </div>
-                        <div className="rounded-2xl border border-glow/25 bg-glow/[0.06] p-4">
-                          <p className="font-mono text-[0.65rem] tracking-[0.22em] text-glow uppercase">A possible solution</p>
-                          <p className="mt-2 text-sm leading-relaxed text-white/85">{industry.solution}</p>
-                        </div>
-                        <Link
-                          href={`/contact?industry=${industry.id}`}
-                          className="group/link inline-flex items-center gap-1.5 self-start text-sm font-medium text-glow underline-offset-4 hover:underline"
-                        >
-                          Discuss this solution
-                          <ArrowUpRight aria-hidden className="size-4 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </article>
+                  <h3 className="font-display text-lg font-semibold leading-snug tracking-tight">
+                    {industry.name}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-white/60">{industry.summary}</p>
+                </Link>
               </Reveal>
             );
           })}
         </ul>
+
+        <Reveal className="mt-16 md:mt-20">
+          <div className="rounded-[1.75rem] border border-glow/25 bg-glow/[0.05] p-7 sm:p-10 lg:p-12">
+            <h3 className="max-w-3xl font-display text-[clamp(1.6rem,3.4vw,2.6rem)] font-semibold leading-tight tracking-[-0.03em] text-balance">
+              Your industry may be different.{" "}
+              <span className="text-glow-gradient">Our approach stays the same.</span>
+            </h3>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
+              First, we learn how your business works. Then we find where technology can actually
+              help. Then we build a solution that fits what you need.
+            </p>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
+              You don&apos;t need to know the technical answer before you talk to us. Tell us what
+              your business needs, and we&apos;ll work out how technology can help.
+            </p>
+            <Button href="/contact" className="mt-8">
+              Let&apos;s talk about your needs
+            </Button>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

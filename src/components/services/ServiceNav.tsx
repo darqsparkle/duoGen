@@ -44,7 +44,7 @@ export function ServiceNav() {
       aria-label="Service categories"
       className="sticky top-[5.25rem] z-40 px-3 sm:top-[6.25rem] sm:px-5"
     >
-      <div className="mx-auto max-w-5xl rounded-full border border-line bg-white/85 p-1.5 shadow-[0_20px_40px_-28px_rgb(17_19_38/0.4)] backdrop-blur-xl">
+      <div className="mx-auto w-fit max-w-full rounded-full border border-line bg-white/85 p-1.5 shadow-[0_20px_40px_-28px_rgb(17_19_38/0.4)] backdrop-blur-xl">
         <ul ref={listRef} className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {serviceDetails.map((service) => {
             const isActive = active === service.id;

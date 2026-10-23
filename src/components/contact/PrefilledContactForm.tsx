@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { industries } from "@/lib/industries";
 import { serviceDetails, solutionNeeds, type ServiceId } from "@/lib/services";
-import { industryOptions } from "@/lib/validation";
 import { ContactForm, type EnquiryPrefill } from "./ContactForm";
 
 /** Maps a service section id onto the form's "Services required" options. */
@@ -15,15 +14,6 @@ const serviceToOptions: Record<ServiceId, string[]> = {
   applications: ["Web Application", "Mobile Application"],
   automation: ["Automation"],
   integrations: ["Integrations"],
-};
-
-const industryToOption: Record<string, (typeof industryOptions)[number]> = {
-  engineering: "Engineering and Manufacturing",
-  healthcare: "Medical and Healthcare",
-  construction: "Construction and Real Estate",
-  retail: "Retail and E-commerce",
-  sales: "Sales and Distribution",
-  "professional-services": "Professional Services",
 };
 
 /**
@@ -49,7 +39,7 @@ export function PrefilledContactForm() {
   const industry = industries.find((i) => i.id === params.get("industry"));
   if (industry) {
     prefill.label ??= `${industry.name} solutions`;
-    prefill.industry = industryToOption[industry.id];
+    prefill.industry = industry.name;
   }
 
   // Remount when the query changes so the form picks up the new starting point.

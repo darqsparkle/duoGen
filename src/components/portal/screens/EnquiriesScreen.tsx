@@ -251,7 +251,7 @@ export function EnquiriesScreen() {
                 </div>
                 <div>
                   <dt className="text-muted">Preferred contact</dt>
-                  <dd className="font-medium">{e.contactMethod || "—"}</dd>
+                  <dd className="font-medium">{e.contactMethod ? e.contactMethod.split(",").join(", ") : "—"}</dd>
                 </div>
               </dl>
 

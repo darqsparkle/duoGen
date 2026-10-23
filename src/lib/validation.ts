@@ -1,13 +1,6 @@
-export const industryOptions = [
-  "Engineering and Manufacturing",
-  "Medical and Healthcare",
-  "Retail and E-commerce",
-  "Construction and Real Estate",
-  "Sales and Distribution",
-  "Professional Services",
-  "Technology and Startups",
-  "Other",
-] as const;
+import { industries } from "./industries";
+
+export const industryOptions = [...industries.map((i) => i.name), "Other"];
 
 export const serviceOptions = [
   "Website",
@@ -22,16 +15,6 @@ export const serviceOptions = [
   "Not Sure Yet",
 ] as const;
 
-export const budgetOptions = [
-  "Still Exploring",
-  "Under ₹25,000",
-  "₹25,000–₹50,000",
-  "₹50,000–₹1,00,000",
-  "₹1,00,000–₹3,00,000",
-  "₹3,00,000+",
-  "Prefer to Discuss",
-] as const;
-
 export const contactMethodOptions = ["Email", "Phone", "WhatsApp"] as const;
 
 export type EnquiryValues = {
@@ -41,9 +24,8 @@ export type EnquiryValues = {
   phone: string;
   industry: string;
   services: string[];
-  budget: string;
   description: string;
-  contactMethod: string;
+  contactMethods: string[];
   consent: boolean;
 };
 
@@ -57,9 +39,8 @@ export const emptyEnquiry: EnquiryValues = {
   phone: "",
   industry: "",
   services: [],
-  budget: "",
   description: "",
-  contactMethod: "",
+  contactMethods: [],
   consent: false,
 };
 

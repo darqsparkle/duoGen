@@ -1,96 +1,137 @@
-export type IndustryId =
-  | "engineering"
-  | "healthcare"
-  | "construction"
-  | "retail"
-  | "sales"
-  | "professional-services";
-
 export type IndustryIcon =
-  | "factory"
   | "stethoscope"
-  | "building"
+  | "flask"
+  | "factory"
   | "store"
-  | "trending"
-  | "briefcase";
+  | "graduation"
+  | "landmark"
+  | "truck"
+  | "building"
+  | "utensils"
+  | "sprout"
+  | "car"
+  | "megaphone"
+  | "briefcase"
+  | "bag"
+  | "cpu"
+  | "rocket";
 
 export const industries: {
-  id: IndustryId;
+  id: string;
   name: string;
   icon: IndustryIcon;
   summary: string;
-  problem: string;
-  solution: string;
-  preview: "dashboard" | "booking" | "estimator" | "catalog" | "pipeline" | "portal";
 }[] = [
   {
-    id: "engineering",
-    name: "Engineering and Manufacturing",
-    icon: "factory",
-    summary:
-      "Asset tracking, operations dashboards, inventory systems, and internal workflows.",
-    problem:
-      "Equipment status, stock levels, and job progress live in spreadsheets that are out of date almost as soon as they are saved.",
-    solution:
-      "A central operations dashboard with asset tracking, live inventory, and approval workflows the whole team can rely on.",
-    preview: "dashboard",
-  },
-  {
     id: "healthcare",
-    name: "Medical and Healthcare",
+    name: "Healthcare & Hospitals",
     icon: "stethoscope",
     summary:
-      "Professional digital presence, appointment enquiry interfaces, and administrative tools.",
-    problem:
-      "Patients struggle to find accurate information, and enquiries arrive through scattered calls, messages, and walk-ins.",
-    solution:
-      "A trustworthy, accessible website with structured appointment enquiries and a simple administrative view for front-desk staff.",
-    preview: "booking",
+      "EMR and EHR systems, OPD appointment booking, patient portals and doctor directories.",
   },
   {
-    id: "construction",
-    name: "Construction and Real Estate",
-    icon: "building",
+    id: "pharma",
+    name: "Pharma & Life Sciences",
+    icon: "flask",
     summary:
-      "Cost estimators, quotation tools, enquiry management, and project dashboards.",
-    problem:
-      "Every quotation is calculated by hand, so prospects wait days for a number and some never come back.",
-    solution:
-      "An online cost estimator and quotation tool that feeds qualified enquiries straight into a project dashboard.",
-    preview: "estimator",
+      "Product catalogues, MR reporting, stockist and distributor tracking, and secondary sales dashboards.",
+  },
+  {
+    id: "manufacturing",
+    name: "Manufacturing & Industrial",
+    icon: "factory",
+    summary:
+      "ERP workflows, inventory and BOM tracking, production reports and vendor management.",
   },
   {
     id: "retail",
-    name: "Retail and E-commerce",
+    name: "Retail & Wholesale",
     icon: "store",
-    summary: "Product catalogs, online selling, inventory, and order management.",
-    problem:
-      "Selling only in-store limits reach, and stock counts rarely match between the shelf and the records.",
-    solution:
-      "An online catalog and store connected to inventory and order management, so every channel sees the same stock.",
-    preview: "catalog",
+    summary:
+      "POS and billing, GST invoicing, multi-store stock sync and sales reports.",
   },
   {
-    id: "sales",
-    name: "Sales and Distribution",
-    icon: "trending",
-    summary: "CRM, lead management, sales reporting, and follow-up automation.",
-    problem:
-      "Leads slip through the cracks because follow-ups depend on memory, notebooks, and personal phones.",
-    solution:
-      "A CRM with clear pipelines, automatic follow-up reminders, and sales reports that show what is working.",
-    preview: "pipeline",
+    id: "education",
+    name: "Education & E-learning",
+    icon: "graduation",
+    summary:
+      "EdTech platforms, LMS, admission CRM, fee management and student–parent portals.",
+  },
+  {
+    id: "finance",
+    name: "Banking, Finance & Insurance",
+    icon: "landmark",
+    summary:
+      "KYC onboarding, loan and claims workflows, and secure reporting built with compliance in mind.",
+  },
+  {
+    id: "logistics",
+    name: "Logistics, Transport & Supply Chain",
+    icon: "truck",
+    summary:
+      "Shipment tracking, fleet and route management, proof of delivery and warehouse (WMS) dashboards.",
+  },
+  {
+    id: "real-estate",
+    name: "Real Estate & Construction",
+    icon: "building",
+    summary:
+      "Property listings, lead CRM, site-visit scheduling and project progress tracking.",
+  },
+  {
+    id: "hospitality",
+    name: "Hotels, Restaurants & Hospitality",
+    icon: "utensils",
+    summary:
+      "Room and table booking, digital menus, POS and PMS integrations and guest messaging.",
+  },
+  {
+    id: "agriculture",
+    name: "Agriculture & Agribusiness",
+    icon: "sprout",
+    summary:
+      "Dealer networks, farm input catalogues, procurement and stock tracking.",
+  },
+  {
+    id: "automotive",
+    name: "Automotive & Vehicle Services",
+    icon: "car",
+    summary:
+      "Dealer management (DMS), vehicle inventory, service booking and job card workflows.",
+  },
+  {
+    id: "agencies",
+    name: "Media, Marketing & Creative Agencies",
+    icon: "megaphone",
+    summary:
+      "Campaign dashboards, lead management, client approvals and project tracking.",
   },
   {
     id: "professional-services",
-    name: "Professional Services",
+    name: "Professional & Consulting Services",
     icon: "briefcase",
     summary:
-      "Bookings, customer portals, workflow tools, and business reporting.",
-    problem:
-      "Scheduling, document requests, and status updates quietly consume hours that should go to client work.",
-    solution:
-      "Online booking, a secure client portal, and workflow tools with reporting that keeps everyone informed.",
-    preview: "portal",
+      "Client CRM, appointment booking, document handling and engagement tracking.",
+  },
+  {
+    id: "ecommerce",
+    name: "E-commerce & D2C Brands",
+    icon: "bag",
+    summary:
+      "Custom storefronts, order management (OMS), payment gateways and WhatsApp order updates.",
+  },
+  {
+    id: "technology",
+    name: "IT, SaaS & Tech Companies",
+    icon: "cpu",
+    summary:
+      "SaaS products, customer portals, API integrations and admin dashboards.",
+  },
+  {
+    id: "startups-smb",
+    name: "Startups, Small Businesses & Enterprises",
+    icon: "rocket",
+    summary:
+      "From MVP to scale-up: websites, custom software and connected tools that fit your stage.",
   },
 ];

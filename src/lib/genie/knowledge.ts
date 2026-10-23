@@ -186,7 +186,7 @@ export const genieIntents: GenieIntent[] = [
     keywords: ["cost", "price", "pricing", "budget", "how much", "quote", "quotation", "rate", "charges", "fees", "₹"],
     answer: [
       "It depends on what you need — the features, integrations, and scale all shape the effort, so we don't publish fixed prices.",
-      "Share your requirements and an approximate budget range in the enquiry form, and we'll suggest a scope that fits it.",
+      "Share your requirements in the enquiry form, and we'll talk through a scope and cost that fits your goals.",
     ],
     actions: [{ label: "Share your requirements", href: "/contact" }],
     followUps: ["process", "getting-started", "services"],

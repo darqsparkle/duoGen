@@ -49,9 +49,11 @@ export async function submitEnquiry(values: EnquiryValues, honeypot = ""): Promi
       phone: values.phone.trim(),
       industry: values.industry,
       services: values.services,
-      budget: values.budget,
+      // No longer asked for, but the Firestore rules still expect the field.
+      budget: "",
       description: values.description.trim(),
-      contactMethod: values.contactMethod,
+      // Comma-joined without spaces so all three fit the rules' 20-character limit.
+      contactMethod: values.contactMethods.join(","),
       consent: values.consent,
       status: "new",
       createdAt: serverTimestamp(),

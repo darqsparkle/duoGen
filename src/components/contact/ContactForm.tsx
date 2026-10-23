@@ -5,7 +5,6 @@ import { ArrowUpRight, CircleAlert, CircleCheck, LoaderCircle, X } from "lucide-
 import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { enquiriesEnabled, submitEnquiry } from "@/lib/enquiry";
 import {
-  budgetOptions,
   contactMethodOptions,
   emptyEnquiry,
   industryOptions,
@@ -114,13 +113,9 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
   const describedBy = (field: EnquiryField, hint = false) =>
     errors[field] ? `${fieldId(field)}-error` : hint ? `${fieldId(field)}-hint` : undefined;
 
-  const toggleService = (service: string) => {
-    update(
-      "services",
-      values.services.includes(service)
-        ? values.services.filter((s) => s !== service)
-        : [...values.services, service],
-    );
+  const toggle = (field: "services" | "contactMethods", option: string) => {
+    const current = values[field];
+    update(field, current.includes(option) ? current.filter((o) => o !== option) : [...current, option]);
   };
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -359,39 +354,10 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
                         type="checkbox"
                         className="sr-only"
                         checked={checked}
-                        onChange={() => toggleService(service)}
+                        onChange={() => toggle("services", service)}
                       />
                       <span aria-hidden className={cn("size-2 rounded-full", checked ? "bg-glow" : "bg-ink/20")} />
                       {service}
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-
-            <fieldset className="flex flex-col gap-3">
-              <legend className="text-sm font-medium text-ink">
-                Estimated budget <span className="font-normal text-muted">(optional)</span>
-              </legend>
-              <div className="flex flex-wrap gap-2">
-                {budgetOptions.map((budget) => {
-                  const checked = values.budget === budget;
-                  return (
-                    <label
-                      key={budget}
-                      className={cn(
-                        "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 text-sm transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-glow/60",
-                        checked ? "border-ink bg-ink text-white" : "border-line bg-white hover:border-ink/40",
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name={`${uid}-budget`}
-                        className="sr-only"
-                        checked={checked}
-                        onChange={() => update("budget", budget)}
-                      />
-                      {budget}
                     </label>
                   );
                 })}
@@ -421,11 +387,11 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
 
             <fieldset className="flex flex-col gap-3">
               <legend className="text-sm font-medium text-ink">
-                Preferred contact method <span className="font-normal text-muted">(optional)</span>
+                Preferred contact method <span className="font-normal text-muted">(choose any)</span>
               </legend>
               <div className="flex flex-wrap gap-2">
                 {contactMethodOptions.map((method) => {
-                  const checked = values.contactMethod === method;
+                  const checked = values.contactMethods.includes(method);
                   return (
                     <label
                       key={method}
@@ -435,12 +401,12 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
                       )}
                     >
                       <input
-                        type="radio"
-                        name={`${uid}-contact-method`}
+                        type="checkbox"
                         className="sr-only"
                         checked={checked}
-                        onChange={() => update("contactMethod", method)}
+                        onChange={() => toggle("contactMethods", method)}
                       />
+                      <span aria-hidden className={cn("size-2 rounded-full", checked ? "bg-glow" : "bg-ink/20")} />
                       {method}
                     </label>
                   );
