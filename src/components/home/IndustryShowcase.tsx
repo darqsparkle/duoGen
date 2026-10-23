@@ -60,21 +60,26 @@ export function IndustryShowcase() {
           description="Every sector runs differently. Here are a few of the problems we help solve — previews are illustrative, not client projects."
         />
 
-        <ul className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+        <ul className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           {industries.map((industry, index) => {
             const Icon = icons[industry.icon];
             const isOpen = open === industry.id;
             const detailsId = `industry-${industry.id}`;
             return (
-              <Reveal as="li" key={industry.id} dir={directions[index % 3]} delay={(index % 3) * 80}>
+              <Reveal as="li" key={industry.id} dir={directions[index % 3]} delay={(index % 3) * 80} className="min-w-0">
                 <article
                   data-open={isOpen}
                   className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-midnight/80 transition-colors duration-500 hover:border-glow/40 data-[open=true]:border-glow/40 lg:min-h-[400px]"
                 >
                   {/* Summary face */}
                   <div className="flex flex-1 flex-col gap-5 p-6 transition-opacity duration-500 sm:p-7 lg:group-focus-within:opacity-0 lg:group-hover:opacity-0 lg:group-data-[open=true]:opacity-0">
-                    <div className="aspect-[2/1] rounded-2xl border border-white/10 bg-navy/60 p-3">
-                      <IndustryPreview preview={industry.preview} />
+                    {/* The SVG is absolutely placed so it can't feed its intrinsic
+                        size back into the aspect-ratio box: iOS Safari otherwise
+                        sizes this box from the SVG and blows the card past the viewport. */}
+                    <div className="relative aspect-[2/1] w-full shrink-0 rounded-2xl border border-white/10 bg-navy/60">
+                      <div className="absolute inset-3">
+                        <IndustryPreview preview={industry.preview} />
+                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="inline-flex size-10 items-center justify-center rounded-xl bg-glow/10 text-glow" aria-hidden>
