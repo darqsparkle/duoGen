@@ -7,8 +7,12 @@ import { IndustryShowcase } from "@/components/home/IndustryShowcase";
 import { FloatingEcosystem } from "@/components/home/FloatingEcosystem";
 import { ProcessPreview } from "@/components/home/ProcessPreview";
 import { FinalCta } from "@/components/home/FinalCta";
+import { LocalReach } from "@/components/home/LocalReach";
 
 export const metadata: Metadata = {
+  title: { absolute: "App & Software Developers in Chennai and Salem | DuoGen Tech Solutions" },
+  description:
+    "DuoGen Tech Solutions builds websites, web and mobile apps, and custom business software for companies in Chennai, Salem, across India and worldwide.",
   alternates: { canonical: "/" },
 };
 
@@ -22,6 +26,7 @@ export default function HomePage() {
       <IndustryShowcase />
       <FloatingEcosystem />
       <ProcessPreview />
+      <LocalReach />
       <FinalCta
         eyebrow="Start here"
         title={

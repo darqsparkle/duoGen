@@ -3,7 +3,7 @@ export const siteConfig = {
   shortName: "DuoGen",
   statement: "Your business. Reimagined through technology.",
   description:
-    "We design and build the digital experiences, applications, and intelligent systems that help businesses work smarter and grow.",
+    "App and software developers serving Chennai, Salem and clients worldwide. We design and build websites, web and mobile applications, and business software that help businesses work smarter and grow.",
   footerTagline: "Built with intent. Designed for what's next.",
   // Canonical origin for metadata, sitemap.xml and robots.txt. www is the primary
   // Vercel domain (duogen.in redirects to it), so production defaults to it.
@@ -21,6 +21,8 @@ export const navLinks = [
 
 /** Shown in the nav and footer only while roles are open (see useNavLinks). */
 export const careersLink = { href: "/careers", label: "Careers" } as const;
+
+export const privacyLink = { href: "/privacy", label: "Privacy Policy" } as const;
 
 function configured(value: string | undefined) {
   const trimmed = value?.trim();

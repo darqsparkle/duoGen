@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/navigation/Logo";
-import { contactDetails, navLinks, siteConfig, socialLinks } from "@/lib/constants";
+import { contactDetails, navLinks, privacyLink, siteConfig, socialLinks } from "@/lib/constants";
 import { CareersFooterLink } from "@/components/navigation/CareersFooterLink";
 import { serviceDetails } from "@/lib/services";
 
@@ -101,7 +101,12 @@ export function Footer() {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
-          <p>Designed and engineered in-house.</p>
+          <p className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href={privacyLink.href} className="underline-offset-4 hover:text-white hover:underline">
+              {privacyLink.label}
+            </Link>
+            <span>Serving Chennai, Salem and clients worldwide.</span>
+          </p>
         </div>
       </div>
     </footer>

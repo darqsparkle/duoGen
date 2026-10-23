@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, CircleAlert, CircleCheck, LoaderCircle, X } from "lucide-react";
 import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
@@ -431,7 +432,11 @@ export function ContactForm({ prefill }: { prefill?: EnquiryPrefill }) {
                 />
                 <span>
                   I agree that DuoGen Tech Solutions may use the information submitted here to
-                  respond to my enquiry. <span className="text-ink/50">*</span>
+                  respond to my enquiry, as described in the{" "}
+                  <Link href="/privacy" target="_blank" className="font-medium text-ink underline underline-offset-4">
+                    Privacy Policy
+                  </Link>
+                  . <span className="text-ink/50">*</span>
                 </span>
               </label>
               {errors.consent && <ErrorText id={`${fieldId("consent")}-error`}>{errors.consent}</ErrorText>}

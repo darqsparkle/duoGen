@@ -1,4 +1,4 @@
-import { careersLink, contactDetails, navLinks, siteConfig, socialLinks } from "./constants";
+import { careersLink, contactDetails, navLinks, privacyLink, siteConfig, socialLinks } from "./constants";
 
 /** schema.org structured data builders, rendered with <JsonLd />. */
 
@@ -16,6 +16,23 @@ export function organizationSchema() {
     url: absolute("/"),
     logo: absolute("/icon.svg"),
     description: siteConfig.description,
+    areaServed: [
+      { "@type": "City", name: "Chennai", containedInPlace: { "@type": "State", name: "Tamil Nadu" } },
+      { "@type": "City", name: "Salem", containedInPlace: { "@type": "State", name: "Tamil Nadu" } },
+      { "@type": "State", name: "Tamil Nadu" },
+      { "@type": "Country", name: "India" },
+      "Worldwide",
+    ],
+    knowsAbout: [
+      "Mobile app development",
+      "Web application development",
+      "Website development",
+      "Custom software development",
+      "E-commerce development",
+      "CRM development",
+      "Business process automation",
+      "API integrations",
+    ],
     ...(email && { email }),
     ...(phone && { telephone: phone }),
     ...(address && { address }),
@@ -34,12 +51,12 @@ export function websiteSchema() {
   };
 }
 
-export type NavPath = (typeof navLinks)[number]["href"] | typeof careersLink.href;
+export type NavPath = (typeof navLinks)[number]["href"] | typeof careersLink.href | typeof privacyLink.href;
 
 /** Home › page trail for a top-level page. */
 export function breadcrumbTrail(path: NavPath) {
   const home = navLinks[0];
-  const page = [...navLinks, careersLink].find((link) => link.href === path) ?? home;
+  const page = [...navLinks, careersLink, privacyLink].find((link) => link.href === path) ?? home;
   return page === home ? [home] : [home, page];
 }
 
