@@ -34,6 +34,37 @@
   --animate-assemble: assemble 1.4s var(--ease-out-expo) both;
   --animate-converge: converge 1.3s var(--ease-out-expo) both;
   --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+  --animate-heartbeat: heartbeat 1.6s ease-in-out infinite;
+  --animate-heart-glow: heart-glow 1.6s ease-out infinite;
+
+  /* Lub-dub, then rest. */
+  @keyframes heartbeat {
+    0%,
+    40%,
+    100% {
+      transform: scale(1);
+    }
+    10% {
+      transform: scale(1.25);
+    }
+    20% {
+      transform: scale(1.05);
+    }
+    30% {
+      transform: scale(1.2);
+    }
+  }
+  @keyframes heart-glow {
+    0% {
+      opacity: 0.55;
+      transform: scale(0.8);
+    }
+    60%,
+    100% {
+      opacity: 0;
+      transform: scale(2.2);
+    }
+  }
 
   @keyframes marquee {
     from {

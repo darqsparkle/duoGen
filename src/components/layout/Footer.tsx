@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Heart } from "lucide-react";
 import { Logo } from "@/components/navigation/Logo";
 import { contactDetails, navLinks, privacyLink, siteConfig, socialLinks } from "@/lib/constants";
 import { CareersFooterLink } from "@/components/navigation/CareersFooterLink";
@@ -100,6 +100,17 @@ export function Footer() {
         <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+          </p>
+          <p className="group inline-flex items-center gap-2 text-white/70">
+            Made with
+            <span className="relative inline-flex size-5 items-center justify-center">
+              <span aria-hidden className="absolute inset-0 rounded-full bg-[#ff3b5c]/60 blur-[2px] animate-heart-glow" />
+              <Heart
+                aria-label="love"
+                className="relative size-4 fill-[#ff3b5c] text-[#ff3b5c] drop-shadow-[0_0_6px_rgb(255_59_92/0.7)] animate-heartbeat group-hover:[animation-duration:0.8s]"
+              />
+            </span>
+            from <span className="font-medium text-white">Tamil Nadu</span>
           </p>
           <p className="flex flex-wrap gap-x-5 gap-y-2">
             <Link href={privacyLink.href} className="underline-offset-4 hover:text-white hover:underline">
